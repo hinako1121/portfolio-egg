@@ -1,30 +1,33 @@
 import { useState } from 'react';
 import api from '../lib/axios';
 
-export default function Login() {
+export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
+  const handleSignup = async () => {
     try {
-      const res = await api.post('/auth/sign_in', {
+      const res = await api.post('/auth', {
         email,
         password,
+        password_confirmation: passwordConfirmation,
       });
-      // ここでレスポンスヘッダーからトークンを保存
+      // トークン保存（localStorageでもOK）
       localStorage.setItem('access-token', res.headers['access-token']);
       localStorage.setItem('client', res.headers['client']);
       localStorage.setItem('uid', res.headers['uid']);
-      alert('ログイン成功');
+      // 遷移など
+      alert('サインアップ成功');
     } catch (err) {
-      setError('ログインに失敗しました');
+      setError('サインアップに失敗しました');
     }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">ログイン</h2>
+      <h2 className="text-xl font-bold mb-4">サインアップ</h2>
       {error && <p className="text-red-500">{error}</p>}
       <input
         className="border p-2 w-full mb-3"
@@ -39,8 +42,15 @@ export default function Login() {
         value={password}
         onChange={e => setPassword(e.target.value)}
       />
-      <button onClick={handleLogin} className="bg-blue-500 text-white py-2 px-4 rounded">
-        ログイン
+      <input
+        className="border p-2 w-full mb-3"
+        placeholder="Password Confirmation"
+        type="password"
+        value={passwordConfirmation}
+        onChange={e => setPasswordConfirmation(e.target.value)}
+      />
+      <button onClick={handleSignup} className="bg-green-500 text-white py-2 px-4 rounded">
+        サインアップ
       </button>
     </div>
   );
