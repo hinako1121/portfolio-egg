@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
+import MyApps from './pages/MyApps';
+import NewApp from './pages/NewApp';
+import EditApp from './pages/EditApp';
 
 function App() {
   return (
@@ -14,6 +17,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/my-apps" element={<MyApps />} />
+        <Route path="/apps/new" element={<NewApp />} />
+        <Route path="/apps/:id/edit" element={<EditApp />} />
       </Routes>
     </BrowserRouter>
   );

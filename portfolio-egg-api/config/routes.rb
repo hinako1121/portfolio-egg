@@ -5,4 +5,11 @@ Rails.application.routes.draw do
   root to: proc { [200, { 'Content-Type' => 'application/json' }, [{ message: 'Rails API' }.to_json]] }
 
   get "/ping", to: ->(_) { [200, {}, ["pong"]] }
+
+  namespace :api do
+    namespace :v1 do
+      resources :apps
+    end
+  end
+  
 end
