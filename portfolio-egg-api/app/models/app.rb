@@ -23,4 +23,5 @@ class App < ApplicationRecord
 
   validates :title, :category, presence: true
   has_one_attached :thumbnail_image
+  has_many :app_versions, dependent: :destroy
 end

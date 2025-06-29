@@ -1,0 +1,30 @@
+# == Schema Information
+#
+# Table name: app_versions
+#
+#  id             :integer          not null, primary key
+#  app_id         :integer          not null
+#  version_number :string
+#  release_date   :date
+#  changelog      :text
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+# Indexes
+#
+#  index_app_versions_on_app_id  (app_id)
+#
+
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  app: one
+  version_number: MyString
+  release_date: 2025-06-28
+  changelog: MyText
+
+two:
+  app: two
+  version_number: MyString
+  release_date: 2025-06-28
+  changelog: MyText

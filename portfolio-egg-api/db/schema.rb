@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_27_170950) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_29_170726) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_170950) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "app_versions", force: :cascade do |t|
+    t.bigint "app_id", null: false
+    t.string "version_number"
+    t.date "release_date"
+    t.text "changelog"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["app_id"], name: "index_app_versions_on_app_id"
+  end
+
   create_table "apps", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "title"
@@ -53,6 +63,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_170950) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_apps_on_user_id"
+  end
+
+  create_table "feedbacks", force: :cascade do |t|
+    t.bigint "app_version_id", null: false
+    t.bigint "user_id", null: false
+    t.text "comment"
+    t.integer "design_score"
+    t.integer "usability_score"
+    t.integer "creativity_score"
+    t.integer "usefulness_score"
+    t.integer "overall_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["app_version_id"], name: "index_feedbacks_on_app_version_id"
+    t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -85,5 +110,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_170950) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "app_versions", "apps"
   add_foreign_key "apps", "users"
+  add_foreign_key "feedbacks", "app_versions"
+  add_foreign_key "feedbacks", "users"
 end

@@ -1,27 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Profile from './pages/Profile';
-import MyApps from './pages/MyApps';
+import ProfileEdit from './pages/ProfileEdit';
 import NewApp from './pages/NewApp';
-import EditApp from './pages/EditApp';
+import AppList from './pages/AppList';
+import AppDetail from './pages/apps/AppDetail';
+import EditApp from './pages/apps/edit/EditApp';
+import NewVersion from './pages/apps/NewVersion';
+import { useScrollToTop } from './hooks/useScrollToTop';
+
+function AppContent() {
+  useScrollToTop();
+  return (
+    <Routes>
+      <Route path="/" element={<AppList />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/new" element={<NewApp />} />
+      <Route path="/apps/new" element={<NewApp />} />
+      <Route path="/apps/:id" element={<AppDetail />} />
+      <Route path="/apps/:id/edit" element={<EditApp />} />
+      <Route path="/apps/:id/versions/new" element={<NewVersion />} />
+      <Route path="/profile/edit" element={<ProfileEdit />} />
+    </Routes>
+  );
+}
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/my-apps" element={<MyApps />} />
-        <Route path="/apps/new" element={<NewApp />} />
-        <Route path="/apps/:id/edit" element={<EditApp />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
