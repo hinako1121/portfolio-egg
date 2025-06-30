@@ -9,5 +9,6 @@ class User < ActiveRecord::Base
   validates :username, presence: true
   has_many :apps, dependent: :destroy
   has_many :feedbacks, dependent: :destroy
+  has_one_attached :profile_image
 
 end

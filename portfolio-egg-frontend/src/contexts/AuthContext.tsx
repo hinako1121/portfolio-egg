@@ -5,6 +5,7 @@ interface User {
   id: number;
   email: string;
   username: string;
+  profile_image_url?: string;
   profile_image?: string;
   bio?: string;
   github_url?: string;
@@ -14,10 +15,11 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (user: User, tokens: { access_token: string; refresh_token: string }) => void;
+  login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, passwordConfirmation: string, username: string) => Promise<void>;
   logout: () => void;
   updateProfile: (userData: Partial<User>) => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,22 +41,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // ローカルストレージからユーザー情報を復元
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    if (storedUser && storedUser !== "undefined") {
       setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
     }
   }, []);
 
-  const login = (user: User, tokens: { access_token: string; refresh_token: string }) => {
-    // トークンを保存
-    localStorage.setItem('access-token', tokens.access_token);
-    localStorage.setItem('refresh-token', tokens.refresh_token);
-    
-    setUser(user);
+  const login = async (email: string, password: string) => {
+    const response = await fetch('http://localhost:3000/api/v1/auth/sign_in', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include', // 追加
+    });
+
+    // ここで全ヘッダーを出力
+    for (let [key, value] of response.headers.entries()) {
+      console.log(key, value);
+    }
+
+    if (!response.ok) {
+      // ...エラー処理
+    }
+
+    const data = await response.json();
+
+    // ここで全て保存
+    const accessToken = response.headers.get('access-token');
+    const client = response.headers.get('client');
+    const uid = response.headers.get('uid');
+
+    if (accessToken) localStorage.setItem('access-token', accessToken);
+    if (client) localStorage.setItem('client', client);
+    if (uid) localStorage.setItem('uid', uid);
+
+    setUser(data.data); // ここはAPIのレスポンス構造に合わせて
     setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(data.data));
   };
 
   const signup = async (email: string, password: string, passwordConfirmation: string, username: string) => {
@@ -70,6 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           password_confirmation: passwordConfirmation,
           username 
         }),
+        credentials: 'include', 
       });
 
       if (!response.ok) {
@@ -106,6 +131,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('uid');
   };
 
+  const refreshUser = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/v1/profile', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'access-token': localStorage.getItem('access-token') || '',
+          'client': localStorage.getItem('client') || '',
+          'uid': localStorage.getItem('uid') || '',
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('ユーザー情報の取得に失敗しました');
+      const data = await response.json();
+      console.log('refreshUser data:', data);
+      setUser(data);
+      localStorage.setItem('user', JSON.stringify(data));
+    } catch (error) {
+      console.error('refreshUser error:', error);
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem('user');
+    }
+  };
+
   const updateProfile = async (userData: Partial<User>) => {
     try {
       const response = await fetch('http://localhost:3000/api/v1/auth', {
@@ -124,9 +174,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error(errorData.errors?.full_messages?.[0] || 'プロフィール更新に失敗しました');
       }
 
-      const data = await response.json();
-      setUser(data.data);
-      localStorage.setItem('user', JSON.stringify(data.data));
+      await refreshUser();
     } catch (error) {
       console.error('Profile update error:', error);
       throw error;
@@ -141,6 +189,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       signup,
       logout,
       updateProfile,
+      refreshUser,
     }}>
       {children}
     </AuthContext.Provider>
