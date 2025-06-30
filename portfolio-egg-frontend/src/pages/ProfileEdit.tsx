@@ -26,13 +26,14 @@ import { api, type UpdateProfileData, type User } from "@/lib/api";
 
 export default function ProfileEdit() {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, refreshUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState<Partial<UpdateProfileData>>({});
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<UpdateProfileData>({
     username: "",
@@ -66,9 +67,10 @@ export default function ProfileEdit() {
         if (data.profile_image_url) {
           setProfileImagePreview(data.profile_image_url);
         }
+        setFetchError(null);
       } catch (error) {
         console.error("プロフィールデータの取得に失敗しました:", error);
-        navigate("/");
+        setFetchError("プロフィールデータの取得に失敗しました。再度ログインするか、時間をおいてお試しください。");
       } finally {
         setLoading(false);
       }
@@ -160,6 +162,7 @@ export default function ProfileEdit() {
 
     try {
       await api.users.updateProfile(formData);
+      await refreshUser();
       alert("プロフィールが正常に更新されました！");
       navigate("/");
     } catch (error: any) {
@@ -211,6 +214,19 @@ export default function ProfileEdit() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">プロフィールが見つかりません</p>
+          <Link to="/" className="text-blue-600 hover:underline">
+            ホームに戻る
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">{fetchError}</p>
           <Link to="/" className="text-blue-600 hover:underline">
             ホームに戻る
           </Link>

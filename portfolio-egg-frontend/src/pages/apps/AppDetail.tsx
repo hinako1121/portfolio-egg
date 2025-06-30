@@ -20,7 +20,7 @@ import {
   Edit,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { api, type AppDetail as AppDetailType, type CreateFeedbackData } from "@/lib/api";
+import { api, type AppDetail as AppDetailType, type CreateFeedbackData, type Feedback } from "@/lib/api";
 
 export default function AppDetail() {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +37,8 @@ export default function AppDetail() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedVersions, setExpandedVersions] = useState<Set<number>>(new Set());
+  const [existingFeedback, setExistingFeedback] = useState<Feedback | null>(null);
+  const [hasExistingFeedback, setHasExistingFeedback] = useState(false);
 
   useEffect(() => {
     const fetchAppDetail = async () => {
@@ -46,6 +48,36 @@ export default function AppDetail() {
         setLoading(true);
         const data = await api.apps.get(parseInt(id));
         setApp(data);
+        
+        // ログインユーザーの既存フィードバックを取得
+        if (isAuthenticated && data.app_versions.length > 0) {
+          const latestVersion = data.app_versions[0];
+          try {
+            const myFeedback = await api.feedbacks.myFeedback(latestVersion.id);
+            setExistingFeedback(myFeedback);
+            setHasExistingFeedback(!!myFeedback);
+            
+            // 既存フィードバックがあればフォームに設定
+            if (myFeedback) {
+              setFeedbackForm({
+                comment: myFeedback.comment,
+                design_score: myFeedback.design_score,
+                usability_score: myFeedback.usability_score,
+                creativity_score: myFeedback.creativity_score,
+                usefulness_score: myFeedback.usefulness_score,
+                overall_score: myFeedback.overall_score,
+              });
+            }
+          } catch (error: any) {
+            // 認証エラー（401）やその他のエラーは無視して続行
+            if (error.response?.status === 401) {
+              console.log('ユーザーが認証されていません');
+            } else {
+              console.error('既存フィードバックの取得に失敗しました:', error);
+            }
+            // エラーが発生してもアプリ詳細の表示は続行
+          }
+        }
       } catch (error) {
         console.error('アプリ詳細の取得に失敗しました:', error);
       } finally {
@@ -54,7 +86,7 @@ export default function AppDetail() {
     };
 
     fetchAppDetail();
-  }, [id]);
+  }, [id, isAuthenticated]);
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,18 +101,11 @@ export default function AppDetail() {
 
     try {
       await api.feedbacks.create(latestVersion.id, feedbackForm);
-      alert("フィードバックを投稿しました！");
+      alert(hasExistingFeedback ? "フィードバックを更新しました！" : "フィードバックを投稿しました！");
       
-      // フォームをリセット
-      setFeedbackForm({
-        comment: "",
-        design_score: 0,
-        usability_score: 0,
-        creativity_score: 0,
-        usefulness_score: 0,
-        overall_score: 0,
-      });
-
+      // 既存フィードバックフラグを更新
+      setHasExistingFeedback(true);
+      
       // アプリデータを再取得
       const updatedData = await api.apps.get(parseInt(id!));
       setApp(updatedData);
@@ -367,9 +392,14 @@ export default function AppDetail() {
             {isAuthenticated && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-left">フィードバックを投稿</CardTitle>
+                  <CardTitle className="text-left">
+                    {hasExistingFeedback ? "フィードバックを更新" : "フィードバックを投稿"}
+                  </CardTitle>
                   <CardDescription className="text-left">
-                    このアプリについての感想や改善点を教えてください
+                    {hasExistingFeedback 
+                      ? "既存のフィードバックを編集できます"
+                      : "このアプリについての感想や改善点を教えてください"
+                    }
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -428,12 +458,12 @@ export default function AppDetail() {
                       {isSubmitting ? (
                         <>
                           <Send className="w-4 h-4 mr-2 animate-spin" />
-                          投稿中...
+                          {hasExistingFeedback ? "更新中..." : "投稿中..."}
                         </>
                       ) : (
                         <>
                           <Send className="w-4 h-4 mr-2" />
-                          フィードバックを投稿
+                          {hasExistingFeedback ? "フィードバックを更新" : "フィードバックを投稿"}
                         </>
                       )}
                     </Button>
@@ -473,7 +503,7 @@ export default function AppDetail() {
               <CardContent>
                 <div className="flex items-center space-x-3 mb-4">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src="/placeholder.svg" alt={app.user.username} />
+                    <AvatarImage src={user?.profile_image_url ? `${user.profile_image_url}?t=${Date.now()}` : "/placeholder.svg"} />
                     <AvatarFallback>{app.user.username[0]}</AvatarFallback>
                   </Avatar>
                   <div>

@@ -210,11 +210,19 @@ export const api = {
       return response.data;
     },
 
-    // バージョン作成
-    create: async (appId: number, data: CreateVersionData): Promise<AppVersion> => {
-      const response = await axiosInstance.post(`/api/v1/apps/${appId}/app_versions`, {
-        app_version: data
-      });
+    // バージョン作成（アプリ情報も同時に更新）
+    create: async (appId: number, data: CreateVersionData | FormData): Promise<AppVersion> => {
+      let requestData: any;
+      let headers: any = { 'Content-Type': 'application/json' };
+      
+      if (data instanceof FormData) {
+        requestData = data;
+        headers = { 'Content-Type': 'multipart/form-data' };
+      } else {
+        requestData = { app_version: data };
+      }
+      
+      const response = await axiosInstance.post(`/api/v1/apps/${appId}/app_versions`, requestData, { headers });
       return response.data;
     }
   },
@@ -233,6 +241,12 @@ export const api = {
         feedback: data
       });
       return response.data;
+    },
+
+    // ユーザーの既存フィードバック取得
+    myFeedback: async (versionId: number): Promise<Feedback | null> => {
+      const response = await axiosInstance.get(`/api/v1/app_versions/${versionId}/feedbacks/my_feedback`);
+      return response.data.feedback;
     }
   },
 

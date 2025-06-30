@@ -11,7 +11,7 @@ import { api, type SignupData } from "@/lib/api";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -78,10 +78,8 @@ export default function Signup() {
     setIsSubmitting(true);
 
     try {
-      const response = await api.auth.signup(formData);
-      
-      // サインアップ成功後、自動ログイン
-      login(response.user, response.tokens);
+      await signup(formData.email, formData.password, formData.password_confirmation, formData.username);
+      //サインアップ後、自動ログイン
       alert("アカウントを作成しました！");
       navigate("/");
     } catch (error: any) {

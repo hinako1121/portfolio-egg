@@ -25,4 +25,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// レスポンスで新しいトークンがあれば保存
+api.interceptors.response.use((response) => {
+  const newToken = response.headers['access-token'];
+  const newClient = response.headers['client'];
+  const newUid = response.headers['uid'];
+  if (newToken) localStorage.setItem('access-token', newToken);
+  if (newClient) localStorage.setItem('client', newClient);
+  if (newUid) localStorage.setItem('uid', newUid);
+  return response;
+});
+
 export default api;

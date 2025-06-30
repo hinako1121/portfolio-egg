@@ -1,7 +1,7 @@
 module Api
   module V1
     class AppsController < ApplicationController
-      before_action :authenticate_user!, except: [:index, :show]
+      before_action :authenticate_api_v1_user!, except: [:index, :show]
       before_action :set_app, only: [:show, :update, :destroy]
 
       # GET /api/v1/apps
@@ -27,8 +27,7 @@ module Api
           apps = apps.left_joins(app_versions: :feedbacks)
                      .group('apps.id')
                      .order('COUNT(feedbacks.id) DESC')
-        when 'newest'
-        default
+        else
           apps = apps.order(created_at: :desc)
         end
 
@@ -36,6 +35,8 @@ module Api
           latest_version = app.app_versions.order(release_date: :desc).first
           feedback_count = app.app_versions.joins(:feedbacks).count
           avg_score = app.app_versions.joins(:feedbacks).average(:overall_score) || 0
+
+          Rails.logger.info "App #{app.id} (#{app.title}): latest_version=#{latest_version&.version_number}"
 
           app.as_json(include: { user: { only: [:id, :username] } }).merge({
             thumbnail_url: app.thumbnail_image.attached? ? url_for(app.thumbnail_image) : nil,
@@ -54,28 +55,32 @@ module Api
         feedback_count = @app.app_versions.joins(:feedbacks).count
         avg_score = @app.app_versions.joins(:feedbacks).average(:overall_score) || 0
 
+        # app_versionsをリリース日順（最新順）で取得
+        app_versions = @app.app_versions.includes(feedbacks: :user).order(release_date: :desc)
+        Rails.logger.info "App #{@app.id} (#{@app.title}): app_versions=#{app_versions.map(&:version_number)}"
+        
         data = @app.as_json(include: { 
-          user: { only: [:id, :username] },
-          app_versions: { 
-            include: { 
-              feedbacks: { 
-                include: { user: { only: [:id, :username] } }
-              }
-            }
+          user: { only: [:id, :username] }
+        })
+        
+        # app_versionsを手動で追加
+        data[:app_versions] = app_versions.as_json(include: { 
+          feedbacks: { 
+            include: { user: { only: [:id, :username] } }
           }
         })
         
         data[:thumbnail_url] = @app.thumbnail_image.attached? ? url_for(@app.thumbnail_image) : nil
         data[:feedback_count] = feedback_count
         data[:overall_score] = avg_score.round(1)
-        data[:is_owner] = user_signed_in? && current_user.id == @app.user_id
+        data[:is_owner] = current_api_v1_user.present? && current_api_v1_user.id == @app.user_id
 
         render json: data
       end
 
       # POST /api/v1/apps
       def create
-        @app = current_user.apps.new(app_params)
+        @app = current_api_v1_user.apps.new(app_params)
         if @app.save
           # 初回バージョンを作成
           @app.app_versions.create!(
@@ -105,7 +110,7 @@ module Api
       end
 
       def my_apps
-        apps = current_user.apps.includes(:app_versions, thumbnail_image_attachment: :blob)
+        apps = current_api_v1_user.apps.includes(:app_versions, thumbnail_image_attachment: :blob)
       
         apps_json = apps.map do |app|
           latest_version = app.app_versions.order(release_date: :desc).first

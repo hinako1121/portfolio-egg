@@ -50,6 +50,8 @@ export default function AppList() {
         if (sortBy) params.sort = sortBy;
         
         const data = await api.apps.list(params);
+        console.log('Apps list data:', data);
+        console.log('First app version info:', data[0]?.version, data[0]?.title);
         setApps(data);
       } catch (error) {
         console.error('アプリ一覧の取得に失敗しました:', error);
@@ -69,6 +71,8 @@ export default function AppList() {
       try {
         setMyAppsLoading(true);
         const data = await api.apps.myApps();
+        console.log('My apps data:', data);
+        console.log('My first app version info:', data[0]?.version, data[0]?.title);
         setMyApps(data);
       } catch (error) {
         console.error('マイアプリの取得に失敗しました:', error);
@@ -109,7 +113,7 @@ export default function AppList() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Avatar className="cursor-pointer">
-                        <AvatarImage src={user?.profile_image || "/placeholder.svg"} alt={user?.username} />
+                        <AvatarImage src={user?.profile_image_url || "/placeholder.svg"} alt={user?.username} />
                         <AvatarFallback>{user?.username?.[0]}</AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
@@ -209,7 +213,7 @@ export default function AppList() {
                         </CardDescription>
                         <div className="flex items-center space-x-2 mb-3">
                           <Avatar className="w-6 h-6">
-                            <AvatarImage src="/placeholder.svg" alt={app.user.username} />
+                            <AvatarImage src={user?.profile_image_url ? `${user.profile_image_url}?t=${Date.now()}` : "/placeholder.svg"} />
                             <AvatarFallback>{app.user.username[0]}</AvatarFallback>
                           </Avatar>
                           <span className="text-sm text-gray-600">{app.user.username}</span>
@@ -272,7 +276,7 @@ export default function AppList() {
                   <CardContent>
                     <div className="flex items-start space-x-4">
                       <Avatar className="w-20 h-20">
-                        <AvatarImage src={user?.profile_image || "/placeholder.svg"} alt={user?.username} />
+                        <AvatarImage src={user?.profile_image_url || "/placeholder.svg"} alt={user?.username} />
                         <AvatarFallback>{user?.username?.[0]}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">

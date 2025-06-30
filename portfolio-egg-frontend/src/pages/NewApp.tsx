@@ -9,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Upload, Github, ExternalLink, ArrowLeft, Save, AlertCircle, ImageIcon, X } from "lucide-react";
+import { Upload, Github, ExternalLink, ArrowLeft, Save, AlertCircle, ImageIcon, X, Star, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { api, type CreateAppData } from "@/lib/api";
+
 
 const categories = ["Webアプリ", "モバイルアプリ", "デスクトップアプリ", "ゲーム", "ツール・ユーティリティ", "その他"];
 
@@ -23,9 +24,9 @@ export default function NewApp() {
     title: "",
     description: "",
     category: "",
-    githubUrl: "",
-    deployUrl: "",
-    thumbnailImage: undefined
+    github_url: "",
+    deploy_url: "",
+    thumbnail_image: undefined
   });
 
   const [errors, setErrors] = useState<Partial<CreateAppData>>({});
@@ -48,7 +49,7 @@ export default function NewApp() {
         setThumbnailPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
-      setFormData((prev) => ({ ...prev, thumbnailImage: file }));
+      setFormData((prev) => ({ ...prev, thumbnail_image: file }));
     }
   };
 
@@ -88,12 +89,12 @@ export default function NewApp() {
     }
 
     // URL validation
-    if (formData.githubUrl && !isValidUrl(formData.githubUrl)) {
-      newErrors.githubUrl = "有効なGitHub URLを入力してください";
+    if (formData.github_url && !isValidUrl(formData.github_url)) {
+      newErrors.github_url = "有効なGitHub URLを入力してください";
     }
 
-    if (formData.deployUrl && !isValidUrl(formData.deployUrl)) {
-      newErrors.deployUrl = "有効なURLを入力してください";
+    if (formData.deploy_url && !isValidUrl(formData.deploy_url)) {
+      newErrors.deploy_url = "有効なURLを入力してください";
     }
 
     setErrors(newErrors);
@@ -259,7 +260,7 @@ export default function NewApp() {
                           className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0"
                           onClick={() => {
                             setThumbnailPreview(null);
-                            setFormData((prev) => ({ ...prev, thumbnailImage: undefined }));
+                            setFormData((prev) => ({ ...prev, thumbnail_image: undefined }));
                           }}
                         >
                           <X className="w-4 h-4" />
@@ -323,12 +324,12 @@ export default function NewApp() {
                     </Label>
                     <Input
                       id="githubUrl"
-                      value={formData.githubUrl}
-                      onChange={(e) => handleInputChange("githubUrl", e.target.value)}
+                      value={formData.github_url}
+                      onChange={(e) => handleInputChange("github_url", e.target.value)}
                       placeholder="https://github.com/username/repository"
-                      className={errors.githubUrl ? "border-red-500" : ""}
+                      className={errors.github_url ? "border-red-500" : ""}
                     />
-                    {errors.githubUrl && <p className="text-sm text-red-500 mt-1">{errors.githubUrl}</p>}
+                    {errors.github_url && <p className="text-sm text-red-500 mt-1">{errors.github_url}</p>}
                   </div>
 
                   <div>
@@ -338,12 +339,12 @@ export default function NewApp() {
                     </Label>
                     <Input
                       id="deployUrl"
-                      value={formData.deployUrl}
-                      onChange={(e) => handleInputChange("deployUrl", e.target.value)}
+                      value={formData.deploy_url}
+                      onChange={(e) => handleInputChange("deploy_url", e.target.value)}
                       placeholder="https://your-app.vercel.app"
-                      className={errors.deployUrl ? "border-red-500" : ""}
+                      className={errors.deploy_url ? "border-red-500" : ""}
                     />
-                    {errors.deployUrl && <p className="text-sm text-red-500 mt-1">{errors.deployUrl}</p>}
+                    {errors.deploy_url && <p className="text-sm text-red-500 mt-1">{errors.deploy_url}</p>}
                   </div>
                 </CardContent>
               </Card>
@@ -364,46 +365,6 @@ export default function NewApp() {
                       className="bg-gray-100"
                     />
                     <p className="text-sm text-gray-500 mt-1">初回リリースは1.0.0で固定されます</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* プレビュー */}
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-left">投稿後の表示イメージ</CardTitle>
-                  <CardDescription className="text-left">投稿後はこのように表示されます</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="border rounded-lg p-4 bg-white">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-lg font-semibold text-left">
-                        {formData.title || "アプリタイトル"}
-                      </h3>
-                      <Badge variant="secondary">{formData.category || "カテゴリ"}</Badge>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3 text-left line-clamp-2">
-                      {formData.description || "アプリの説明文がここに表示されます"}
-                    </p>
-                    <div className="flex items-center space-x-2 mb-3">
-                      <Avatar className="w-6 h-6">
-                        <AvatarFallback>{user?.username?.[0]}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm text-gray-600">{user?.username}</span>
-                      <span className="text-xs text-gray-400">v1.0.0</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">-</span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-gray-500">
-                        <MessageCircle className="w-4 h-4" />
-                        <span className="text-sm">0</span>
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>

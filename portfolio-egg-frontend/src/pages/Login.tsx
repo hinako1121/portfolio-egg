@@ -61,10 +61,7 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const response = await api.auth.login(formData.email, formData.password);
-      
-      // ログイン成功
-      login(response.user, response.tokens);
+      await login(formData.email, formData.password);
       alert("ログインしました！");
       navigate("/");
     } catch (error: any) {

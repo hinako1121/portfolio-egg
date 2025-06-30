@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Upload, Github, ExternalLink, ArrowLeft, Save, AlertCircle, ImageIcon, X } from "lucide-react";
+import { Upload, Github, ExternalLink, ArrowLeft, Save, AlertCircle, ImageIcon, X, Plus } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { api, type UpdateAppData, type AppDetail } from "@/lib/api";
 
@@ -44,6 +44,12 @@ export default function EditApp() {
         setLoading(true);
         const data = await api.apps.get(parseInt(id));
         setApp(data);
+        
+        // デバッグ用ログ
+        console.log('App data:', data);
+        console.log('App versions:', data.app_versions);
+        console.log('Latest version:', data.app_versions?.[0]?.version_number);
+        console.log('All versions:', data.app_versions?.map(v => ({ version: v.version_number, date: v.release_date })));
         
         // フォームデータを初期化
         setFormData({
@@ -425,18 +431,41 @@ export default function EditApp() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-left">バージョン情報</CardTitle>
-                  <CardDescription className="text-left">現在のバージョン番号を設定してください</CardDescription>
+                  <CardDescription className="text-left">現在のバージョン情報を表示します</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div>
-                    <Label htmlFor="versionNumber" className="text-left">バージョン番号</Label>
-                    <Input
-                      id="versionNumber"
-                      value={app.app_versions[0]?.version_number || "1.0.0"}
-                      disabled
-                      className="bg-gray-100"
-                    />
-                    <p className="text-sm text-gray-500 mt-1">バージョン番号は「バージョン追加」画面で変更できます</p>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="versionNumber" className="text-left">最新バージョン番号</Label>
+                      <Input
+                        id="versionNumber"
+                        value={app.app_versions && app.app_versions.length > 0 ? app.app_versions[0].version_number : "1.0.0"}
+                        disabled
+                        className="bg-gray-100"
+                      />
+                    </div>
+                    
+                    {app.app_versions && app.app_versions.length > 0 && (
+                      <div>
+                        <Label className="text-left">リリース日</Label>
+                        <Input
+                          value={new Date(app.app_versions[0].release_date).toLocaleDateString("ja-JP")}
+                          disabled
+                          className="bg-gray-100"
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" asChild className="flex-1">
+                        <Link to={`/apps/${id}/versions/new`}>
+                          <Plus className="w-4 h-4 mr-2" />
+                          新しいバージョンを追加
+                        </Link>
+                      </Button>
+                    </div>
+                    
+                    <p className="text-sm text-gray-500">バージョン番号は「バージョン追加」画面で変更できます</p>
                   </div>
                 </CardContent>
               </Card>

@@ -17,7 +17,11 @@ Rails.application.routes.draw do
       
       # バージョン関連
       resources :app_versions, only: [:show] do
-        resources :feedbacks, only: [:index, :create]
+        resources :feedbacks, only: [:index, :create] do
+          collection do
+            get :my_feedback
+          end
+        end
       end
       
       # ユーザー関連
