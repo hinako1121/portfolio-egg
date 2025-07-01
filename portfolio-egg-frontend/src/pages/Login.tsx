@@ -194,31 +194,6 @@ export default function Login() {
               </Link>
             </div>
 
-            <Separator />
-
-            {/* デモログイン */}
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600 text-center">デモアカウントでログイン</p>
-              <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" onClick={() => handleDemoLogin("user1")} disabled={isSubmitting}>
-                  田中太郎
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => handleDemoLogin("user2")} disabled={isSubmitting}>
-                  佐藤花子
-                </Button>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* SNSログイン（将来の実装用） */}
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full bg-transparent" disabled>
-                <Github className="w-4 h-4 mr-2" />
-                GitHubでログイン（準備中）
-              </Button>
-            </div>
-
             <div className="text-center text-sm text-gray-600">
               アカウントをお持ちでない場合は{" "}
               <Link to="/signup" className="text-blue-600 hover:underline font-medium">
@@ -229,7 +204,7 @@ export default function Login() {
         </Card>
 
         <div className="mt-8 text-center text-xs text-gray-500">
-          <p>© 2024 ポートフォリオのたまご. All rights reserved.</p>
+          <p>© 2025 ポートフォリオのたまご. All rights reserved.</p>
         </div>
       </div>
     </div>

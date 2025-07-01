@@ -15,6 +15,7 @@ import {
   Plus,
   Github,
   ExternalLink,
+  Twitter,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -26,6 +27,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { api, type App as AppType } from "@/lib/api";
 
+const APPS_PER_PAGE = 20;
+
 export default function AppList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -34,6 +37,7 @@ export default function AppList() {
   const [myApps, setMyApps] = useState<AppType[]>([]);
   const [loading, setLoading] = useState(true);
   const [myAppsLoading, setMyAppsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const categories = ["all", "Webアプリ", "モバイルアプリ", "デスクトップアプリ", "ゲーム", "ツール・ユーティリティ", "その他"];
 
@@ -50,8 +54,6 @@ export default function AppList() {
         if (sortBy) params.sort = sortBy;
         
         const data = await api.apps.list(params);
-        console.log('Apps list data:', data);
-        console.log('First app version info:', data[0]?.version, data[0]?.title);
         setApps(data);
       } catch (error) {
         console.error('アプリ一覧の取得に失敗しました:', error);
@@ -71,8 +73,6 @@ export default function AppList() {
       try {
         setMyAppsLoading(true);
         const data = await api.apps.myApps();
-        console.log('My apps data:', data);
-        console.log('My first app version info:', data[0]?.version, data[0]?.title);
         setMyApps(data);
       } catch (error) {
         console.error('マイアプリの取得に失敗しました:', error);
@@ -83,6 +83,10 @@ export default function AppList() {
 
     fetchMyApps();
   }, [isAuthenticated]);
+
+  // ページネーション用のアプリ配列
+  const paginatedApps = apps.slice((currentPage - 1) * APPS_PER_PAGE, currentPage * APPS_PER_PAGE);
+  const totalPages = Math.ceil(apps.length / APPS_PER_PAGE);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("ja-JP", {
@@ -192,75 +196,104 @@ export default function AppList() {
                 <p className="text-gray-600">読み込み中...</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {apps.map((app) => (
-                  <Link key={app.id} to={`/apps/${app.id}`}>
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                      <CardHeader className="p-0">
-                        <img
-                          src={app.thumbnail_url || "/placeholder.svg"}
-                          alt={app.title}
-                          className="w-full h-48 object-cover rounded-t-lg"
-                        />
-                      </CardHeader>
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <CardTitle className="text-lg text-left">{app.title}</CardTitle>
-                          <Badge variant="secondary">{app.category}</Badge>
-                        </div>
-                        <CardDescription className="text-sm text-gray-600 mb-3 line-clamp-2 text-left">
-                          {app.description}
-                        </CardDescription>
-                        <div className="flex items-center space-x-2 mb-3">
-                          <Avatar className="w-6 h-6">
-                            <AvatarImage src={user?.profile_image_url ? `${user.profile_image_url}?t=${Date.now()}` : "/placeholder.svg"} />
-                            <AvatarFallback>{app.user.username[0]}</AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm text-gray-600">{app.user.username}</span>
-                          <span className="text-xs text-gray-400">v{app.version}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{app.overall_score}</span>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginatedApps.map((app) => (
+                    <Link key={app.id} to={`/apps/${app.id}`}>
+                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-[28rem] flex flex-col justify-between">
+                        <CardHeader className="p-0">
+                          <img
+                            src={app.thumbnail_url || "/placeholder.svg"}
+                            alt={app.title}
+                            className="w-full h-48 object-cover rounded-t-lg"
+                          />
+                        </CardHeader>
+                        <CardContent className="p-4 flex-1 flex flex-col">
+                          <div className="flex items-start justify-between mb-2">
+                            <CardTitle className="text-lg text-left">{app.title}</CardTitle>
+                            <Badge variant="secondary">{app.category}</Badge>
                           </div>
-                          <div className="flex items-center space-x-1 text-gray-500">
-                            <MessageCircle className="w-4 h-4" />
-                            <span className="text-sm">{app.feedback_count}</span>
+                          <p className="text-sm text-muted-foreground line-clamp-3">
+                            {app.description}
+                          </p>
+                          <div className="flex items-center space-x-2 mt-3">
+                            <Avatar className="w-6 h-6">
+                              <AvatarImage src={app.user.profile_image_url || "/placeholder.svg"} alt={app.user.username} />
+                              <AvatarFallback>{app.user.username[0]}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm text-gray-600">{app.user.username}</span>
+                            <span className="text-xs text-gray-400">v{app.version}</span>
                           </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1 bg-transparent"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (app.github_url) window.open(app.github_url, "_blank");
-                          }}
-                        >
-                          <Github className="w-4 h-4 mr-2" />
-                          GitHub
-                        </Button>
-                        <Button
-                          size="sm"
-                          className="flex-1"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (app.deploy_url) window.open(app.deploy_url, "_blank");
-                          }}
-                        >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          開く
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <div className="flex items-center space-x-1">
+                              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                              <span className="text-sm font-medium">{app.overall_score}</span>
+                            </div>
+                            <div className="flex items-center space-x-1 text-gray-500">
+                              <MessageCircle className="w-4 h-4" />
+                              <span className="text-sm">{app.feedback_count}</span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 mt-auto pt-4">
+                            {app.github_url ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 min-w-0"
+                                onClick={e => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  window.open(app.github_url, "_blank");
+                                }}
+                              >
+                                <Github className="w-4 h-4 mr-2" />GitHub
+                              </Button>
+                            ) : (
+                              <div className="flex-1 min-w-0" />
+                            )}
+                            {app.deploy_url ? (
+                              <Button
+                                size="sm"
+                                className="flex-1 min-w-0"
+                                onClick={e => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  window.open(app.deploy_url, "_blank");
+                                }}
+                              >
+                                <ExternalLink className="w-4 h-4 mr-2" />開く
+                              </Button>
+                            ) : (
+                              <div className="flex-1 min-w-0" />
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+                {/* ページネーションUI */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center mt-8 space-x-2">
+                    <Button size="sm" variant="outline" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                      前へ
+                    </Button>
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <Button
+                        key={i + 1}
+                        size="sm"
+                        variant={currentPage === i + 1 ? "default" : "outline"}
+                        onClick={() => setCurrentPage(i + 1)}
+                      >
+                        {i + 1}
+                      </Button>
+                    ))}
+                    <Button size="sm" variant="outline" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                      次へ
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </TabsContent>
 
@@ -282,16 +315,24 @@ export default function AppList() {
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-left">{user?.username}</h3>
                         <p className="text-gray-600 mb-3 text-left">{user?.bio || 'プロフィールが設定されていません'}</p>
-                        <div className="flex space-x-4">
+                        <div className="flex items-center space-x-2 mb-2">
                           {user?.github_url && (
-                            <Button variant="outline" size="sm" asChild>
+                            <Button variant="outline" size="sm" asChild className="flex items-center gap-1">
                               <a href={user.github_url} target="_blank" rel="noopener noreferrer">
-                                <Github className="w-4 h-4 mr-2" />
-                                GitHub
+                                <Github className="w-4 h-4" />GitHub
                               </a>
                             </Button>
                           )}
-                          <Button variant="outline" size="sm" asChild>
+                          {user?.twitter_url && (
+                            <Button variant="outline" size="sm" asChild className="flex items-center gap-1">
+                              <a href={user.twitter_url} target="_blank" rel="noopener noreferrer">
+                                <Twitter className="w-4 h-4" />X
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                        <div className="flex justify-end">
+                          <Button variant="default" size="sm" asChild>
                             <Link to="/profile/edit">プロフィール編集</Link>
                           </Button>
                         </div>
@@ -353,7 +394,21 @@ export default function AppList() {
                               <Button size="sm" variant="outline" asChild>
                                 <Link to={`/apps/${app.id}/versions/new`}>バージョン追加</Link>
                               </Button>
-                              <Button size="sm" variant="destructive">削除</Button>
+                              <Button size="sm" variant="destructive" onClick={async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (window.confirm('本当にこのアプリを削除しますか？')) {
+                                  try {
+                                    await api.apps.delete(app.id);
+                                    alert('アプリを削除しました');
+                                    setMyApps((prev) => prev.filter((a) => a.id !== app.id));
+                                  } catch (err) {
+                                    alert('削除に失敗しました');
+                                  }
+                                }
+                              }}>
+                                削除
+                              </Button>
                             </div>
                           </div>
                         ))}

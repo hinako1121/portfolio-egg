@@ -15,7 +15,11 @@ export interface App {
   user: {
     id: number;
     username: string;
-  };
+    profile_image_url?: string;
+    bio?: string;
+    github_url?: string;
+    twitter_url?: string;
+  }
   created_at: string;
   updated_at: string;
 }
@@ -54,6 +58,7 @@ export interface User {
   email: string;
   bio?: string;
   github_url?: string;
+  twitter_url?: string;
   profile_image_url?: string;
 }
 
@@ -86,6 +91,7 @@ export interface UpdateProfileData {
   username?: string;
   bio?: string;
   github_url?: string;
+  twitter_url?: string;
   profile_image?: File;
 }
 
@@ -246,7 +252,7 @@ export const api = {
     // ユーザーの既存フィードバック取得
     myFeedback: async (versionId: number): Promise<Feedback | null> => {
       const response = await axiosInstance.get(`/api/v1/app_versions/${versionId}/feedbacks/my_feedback`);
-      return response.data.feedback;
+      return response.data;
     }
   },
 
@@ -264,6 +270,7 @@ export const api = {
       if (data.username) formData.append('user[username]', data.username);
       if (data.bio) formData.append('user[bio]', data.bio);
       if (data.github_url) formData.append('user[github_url]', data.github_url);
+      if (data.twitter_url) formData.append('user[twitter_url]', data.twitter_url);
       if (data.profile_image) formData.append('user[profile_image]', data.profile_image);
 
       const response = await axiosInstance.patch('/api/v1/profile', formData, {

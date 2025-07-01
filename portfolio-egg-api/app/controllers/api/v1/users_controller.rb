@@ -10,6 +10,7 @@ module Api
           email: current_api_v1_user.email,
           bio: current_api_v1_user.bio,
           github_url: current_api_v1_user.github_url,
+          twitter_url: current_api_v1_user.twitter_url,
           profile_image_url: current_api_v1_user.profile_image.attached? ? url_for(current_api_v1_user.profile_image) : nil
         }
       end
@@ -22,6 +23,7 @@ module Api
             email: current_api_v1_user.email,
             bio: current_api_v1_user.bio,
             github_url: current_api_v1_user.github_url,
+            twitter_url: current_api_v1_user.twitter_url,
             profile_image_url: current_api_v1_user.profile_image.attached? ? url_for(current_api_v1_user.profile_image) : nil
           }
         else
@@ -32,7 +34,7 @@ module Api
       private
 
       def user_params
-        params.require(:user).permit(:username, :bio, :github_url, :profile_image)
+        params.require(:user).permit(:username, :bio, :github_url, :twitter_url, :profile_image)
       end
     end
   end

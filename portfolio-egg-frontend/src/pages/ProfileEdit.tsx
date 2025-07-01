@@ -29,16 +29,17 @@ export default function ProfileEdit() {
   const { user, isAuthenticated, refreshUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [errors, setErrors] = useState<Partial<UpdateProfileData>>({});
+  const [errors, setErrors] = useState<Partial<UpdateProfileData & { twitter_url?: string }>>({});
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<UpdateProfileData>({
+  const [formData, setFormData] = useState<UpdateProfileData & { twitter_url?: string }>({
     username: "",
     bio: "",
     github_url: "",
+    twitter_url: "",
     profile_image: undefined
   });
 
@@ -60,6 +61,7 @@ export default function ProfileEdit() {
           username: data.username || "",
           bio: data.bio || "",
           github_url: data.github_url || "",
+          twitter_url: data.twitter_url || "",
           profile_image: undefined
         });
         
@@ -79,10 +81,10 @@ export default function ProfileEdit() {
     fetchProfile();
   }, [isAuthenticated, navigate]);
 
-  const handleInputChange = (field: keyof UpdateProfileData, value: string) => {
+  const handleInputChange = (field: keyof (UpdateProfileData & { twitter_url?: string }), value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // エラーをクリア
-    if (errors[field]) {
+    if ((errors as any)[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
@@ -136,6 +138,10 @@ export default function ProfileEdit() {
     // URL validation
     if (formData.github_url && !isValidUrl(formData.github_url)) {
       newErrors.github_url = "有効なGitHub URLを入力してください";
+    }
+
+    if ((formData as any).twitter_url && !isValidUrl((formData as any).twitter_url)) {
+      (newErrors as any).twitter_url = "有効なX URLを入力してください";
     }
 
     setErrors(newErrors);
@@ -310,6 +316,22 @@ export default function ProfileEdit() {
                     {errors.github_url && <p className="text-sm text-red-500 mt-1">{errors.github_url}</p>}
                     <p className="text-sm text-gray-500 mt-1">GitHubプロフィールのURLを入力してください（任意）</p>
                   </div>
+
+                  <div>
+                    <Label htmlFor="twitterUrl" className="text-left">
+                      <Twitter className="w-4 h-4 inline mr-2" />
+                      X URL
+                    </Label>
+                    <Input
+                      id="twitterUrl"
+                      value={formData.twitter_url}
+                      onChange={(e) => handleInputChange("twitter_url", e.target.value)}
+                      placeholder="https://x.com/username"
+                      className={errors.twitter_url ? "border-red-500" : ""}
+                    />
+                    {(errors as any).twitter_url && <p className="text-sm text-red-500 mt-1">{(errors as any).twitter_url}</p>}
+                    <p className="text-sm text-gray-500 mt-1">XプロフィールのURLを入力してください（任意）</p>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -412,6 +434,14 @@ export default function ProfileEdit() {
                       <Github className="w-4 h-4 text-gray-400" />
                       <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                         GitHub
+                      </a>
+                    </div>
+                  )}
+                  {profile.twitter_url && (
+                    <div className="flex items-center space-x-2 text-sm">
+                      <Twitter className="w-4 h-4 text-blue-400" />
+                      <a href={profile.twitter_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        X
                       </a>
                     </div>
                   )}

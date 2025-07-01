@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { api, type AppDetail as AppDetailType, type CreateFeedbackData, type Feedback } from "@/lib/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AppDetail() {
   const { id } = useParams<{ id: string }>();
@@ -37,8 +38,11 @@ export default function AppDetail() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedVersions, setExpandedVersions] = useState<Set<number>>(new Set());
+  const [allExpanded, setAllExpanded] = useState(false);
   const [existingFeedback, setExistingFeedback] = useState<Feedback | null>(null);
   const [hasExistingFeedback, setHasExistingFeedback] = useState(false);
+  const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
+  const [versionListOpen, setVersionListOpen] = useState(false);
 
   useEffect(() => {
     const fetchAppDetail = async () => {
@@ -53,19 +57,20 @@ export default function AppDetail() {
         if (isAuthenticated && data.app_versions.length > 0) {
           const latestVersion = data.app_versions[0];
           try {
-            const myFeedback = await api.feedbacks.myFeedback(latestVersion.id);
-            setExistingFeedback(myFeedback);
-            setHasExistingFeedback(!!myFeedback);
+            const existingFeedback = await api.feedbacks.myFeedback(latestVersion.id);
+            console.log('myFeedback API result:', existingFeedback);
+            setExistingFeedback(existingFeedback);
+            setHasExistingFeedback(!!existingFeedback);
             
             // 既存フィードバックがあればフォームに設定
-            if (myFeedback) {
+            if (existingFeedback) {
               setFeedbackForm({
-                comment: myFeedback.comment,
-                design_score: myFeedback.design_score,
-                usability_score: myFeedback.usability_score,
-                creativity_score: myFeedback.creativity_score,
-                usefulness_score: myFeedback.usefulness_score,
-                overall_score: myFeedback.overall_score,
+                comment: existingFeedback.comment,
+                design_score: existingFeedback.design_score,
+                usability_score: existingFeedback.usability_score,
+                creativity_score: existingFeedback.creativity_score,
+                usefulness_score: existingFeedback.usefulness_score,
+                overall_score: existingFeedback.overall_score,
               });
             }
           } catch (error: any) {
@@ -78,6 +83,10 @@ export default function AppDetail() {
             // エラーが発生してもアプリ詳細の表示は続行
           }
         }
+
+        if (data.app_versions.length > 0) {
+          setSelectedVersionId(data.app_versions[0].id);
+        }
       } catch (error) {
         console.error('アプリ詳細の取得に失敗しました:', error);
       } finally {
@@ -87,6 +96,41 @@ export default function AppDetail() {
 
     fetchAppDetail();
   }, [id, isAuthenticated]);
+
+  useEffect(() => {
+    if (app && app.app_versions.length > 0) {
+      setExpandedVersions(new Set([app.app_versions[0].id])); // 最新バージョンのみ展開
+    }
+  }, [app]);
+
+  useEffect(() => {
+    console.log('existingFeedback:', existingFeedback);
+    if (existingFeedback) {
+      setFeedbackForm({
+        comment: existingFeedback.comment,
+        design_score: existingFeedback.design_score,
+        usability_score: existingFeedback.usability_score,
+        creativity_score: existingFeedback.creativity_score,
+        usefulness_score: existingFeedback.usefulness_score,
+        overall_score: existingFeedback.overall_score,
+      });
+    }
+    // 既存フィードバックがnullなら初期値に戻す
+    else {
+      setFeedbackForm({
+        comment: "",
+        design_score: 0,
+        usability_score: 0,
+        creativity_score: 0,
+        usefulness_score: 0,
+        overall_score: 0,
+      });
+    }
+  }, [existingFeedback]);
+
+  useEffect(() => {
+    console.log('feedbackForm:', feedbackForm);
+  }, [feedbackForm]);
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,13 +165,25 @@ export default function AppDetail() {
   };
 
   const toggleVersionExpansion = (versionId: number) => {
-    const newExpanded = new Set(expandedVersions);
-    if (newExpanded.has(versionId)) {
-      newExpanded.delete(versionId);
-    } else {
-      newExpanded.add(versionId);
+    setExpandedVersions((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(versionId)) {
+        newSet.delete(versionId);
+      } else {
+        newSet.add(versionId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleExpandAll = () => {
+    if (allExpanded) {
+      setExpandedVersions(new Set());
+      setAllExpanded(false);
+    } else if (app) {
+      setExpandedVersions(new Set(app.app_versions.map(v => v.id)));
+      setAllExpanded(true);
     }
-    setExpandedVersions(newExpanded);
   };
 
   const StarRating = ({
@@ -145,7 +201,7 @@ export default function AppDetail() {
           key={star}
           type="button"
           onClick={() => !readonly && onRatingChange?.(star)}
-          className={`${readonly ? "cursor-default" : "cursor-pointer hover:scale-110"} transition-transform`}
+          className={readonly ? "cursor-default" : "cursor-pointer"}
           disabled={readonly}
         >
           <Star className={`w-5 h-5 ${star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
@@ -196,6 +252,10 @@ export default function AppDetail() {
       </div>
     );
   }
+
+  const sortedVersions = app.app_versions
+    .slice()
+    .sort((a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime());
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -286,104 +346,101 @@ export default function AppDetail() {
             {/* バージョン履歴 */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-left">バージョン履歴</CardTitle>
-                <CardDescription className="text-left">アプリの更新履歴とフィードバック</CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-left">バージョン履歴</CardTitle>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => setVersionListOpen((prev) => !prev)}>
+                    {versionListOpen ? (
+                      <>
+                        <ChevronUp className="w-4 h-4 mr-1" />すべて閉じる
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4 mr-1" />すべて展開
+                      </>
+                    )}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {app.app_versions.map((version) => (
-                    <Collapsible
-                      key={version.id}
-                      open={expandedVersions.has(version.id)}
-                      onOpenChange={() => toggleVersionExpansion(version.id)}
-                    >
-                      <CollapsibleTrigger asChild>
-                        <div className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
-                          <div className="flex items-center space-x-4">
-                            <div>
-                              <h4 className="font-semibold text-left">v{version.version_number}</h4>
-                              <p className="text-sm text-gray-500 text-left">
-                                {formatDate(version.release_date)}
-                              </p>
+                <Collapsible open={versionListOpen}>
+                  <div className="space-y-2">
+                    {sortedVersions.map((version, idx) => (
+                      <Collapsible key={version.id} open={idx === 0 || versionListOpen}>
+                        <CollapsibleTrigger asChild>
+                          <div className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <div className="flex items-center space-x-4">
+                              <span className="font-semibold">v{version.version_number}</span>
+                              <span className="text-sm text-gray-500">{formatDate(version.release_date)}</span>
+                              <span className="text-xs text-gray-500">{version.feedbacks.length} フィードバック</span>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-4">
-                            <div className="text-sm text-gray-500">
-                              {version.feedbacks.length} フィードバック
-                            </div>
-                            {expandedVersions.has(version.id) ? (
-                              <ChevronUp className="w-4 h-4" />
-                            ) : (
-                              <ChevronDown className="w-4 h-4" />
-                            )}
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="pl-8 pb-4">
+                            <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 bg-gray-50 p-3 rounded text-left">{version.changelog}</pre>
                           </div>
-                        </div>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="p-4 border-t">
-                          {/* 変更履歴 */}
-                          <div className="mb-6">
-                            <h5 className="font-semibold mb-2 text-left">変更履歴</h5>
-                            <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 bg-gray-50 p-3 rounded text-left">
-                              {version.changelog}
-                            </pre>
-                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ))}
+                  </div>
+                </Collapsible>
+              </CardContent>
+            </Card>
 
-                          {/* フィードバック一覧 */}
-                          <div>
-                            <h5 className="font-semibold mb-4 text-left">フィードバック</h5>
-                            {version.feedbacks.length > 0 ? (
-                              <div className="space-y-4">
-                                {version.feedbacks.map((feedback) => (
-                                  <div key={feedback.id} className="border rounded-lg p-4">
-                                    <div className="flex items-start justify-between mb-3">
-                                      <div className="flex items-center space-x-2">
-                                        <Avatar className="w-8 h-8">
-                                          <AvatarImage src="/placeholder.svg" alt={feedback.user.username} />
-                                          <AvatarFallback>{feedback.user.username[0]}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                          <p className="font-medium text-left">{feedback.user.username}</p>
-                                          <p className="text-sm text-gray-500 text-left">
-                                            {formatRelativeTime(feedback.created_at)}
-                                          </p>
-                                        </div>
-                                      </div>
-                                      <div className="flex items-center space-x-1">
-                                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                        <span className="text-sm font-medium">{feedback.overall_score}</span>
-                                      </div>
-                                    </div>
-                                    <p className="text-sm text-gray-700 mb-3 text-left">{feedback.comment}</p>
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                      <div className="flex justify-between">
-                                        <span className="text-gray-500">デザイン</span>
-                                        <span>{feedback.design_score}/5</span>
-                                      </div>
-                                      <div className="flex justify-between">
-                                        <span className="text-gray-500">使いやすさ</span>
-                                        <span>{feedback.usability_score}/5</span>
-                                      </div>
-                                      <div className="flex justify-between">
-                                        <span className="text-gray-500">創造性</span>
-                                        <span>{feedback.creativity_score}/5</span>
-                                      </div>
-                                      <div className="flex justify-between">
-                                        <span className="text-gray-500">有用性</span>
-                                        <span>{feedback.usefulness_score}/5</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-gray-500 text-center py-4">まだフィードバックがありません</p>
-                            )}
+            {/* フィードバック絞り込み */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-left">フィードバック</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4">
+                  <Select value={selectedVersionId?.toString() || ""} onValueChange={v => setSelectedVersionId(Number(v))}>
+                    <SelectTrigger className="w-64">
+                      <SelectValue placeholder="バージョンを選択" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {app.app_versions.map((version) => (
+                        <SelectItem key={version.id} value={version.id.toString()}>
+                          v{version.version_number}（{formatDate(version.release_date)}）
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-4">
+                  {app.app_versions.find(v => v.id === selectedVersionId)?.feedbacks.length ? (
+                    app.app_versions.find(v => v.id === selectedVersionId)!.feedbacks.map((feedback) => (
+                      <div key={feedback.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center space-x-2">
+                            <Avatar className="w-8 h-8">
+                              <AvatarImage src={app.user.profile_image_url || "/placeholder.svg"} alt={app.user.username} />
+                              <AvatarFallback>{app.user.username[0]}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium text-left">{app.user.username}</p>
+                              <p className="text-sm text-gray-500 text-left">{formatRelativeTime(feedback.created_at)}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-medium">{feedback.overall_score}</span>
                           </div>
                         </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  ))}
+                        <p className="text-sm text-gray-700 mb-3 text-left">{feedback.comment}</p>
+                        <p className="text-xs text-gray-500 mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                          <span>デザイン {feedback.design_score}/5</span>
+                          <span>使いやすさ {feedback.usability_score}/5</span>
+                          <span>創造性 {feedback.creativity_score}/5</span>
+                          <span>有用性 {feedback.usefulness_score}/5</span>
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">まだフィードバックがありません</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -408,7 +465,7 @@ export default function AppDetail() {
                       <label className="block text-sm font-medium text-left mb-2">コメント</label>
                       <Textarea
                         value={feedbackForm.comment}
-                        onChange={(e) => setFeedbackForm(prev => ({ ...prev, comment: e.target.value }))}
+                        onChange={e => setFeedbackForm(prev => ({ ...prev, comment: e.target.value }))}
                         placeholder="アプリについての感想や改善点を書いてください..."
                         rows={4}
                         required
@@ -420,28 +477,31 @@ export default function AppDetail() {
                         <label className="block text-sm font-medium text-left mb-2">デザイン</label>
                         <StarRating
                           rating={feedbackForm.design_score}
-                          onRatingChange={(rating) => setFeedbackForm(prev => ({ ...prev, design_score: rating }))}
+                          onRatingChange={rating => {
+                            setFeedbackForm(prev => ({ ...prev, design_score: rating }));
+                            console.log(feedbackForm.design_score);
+                          }}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-left mb-2">使いやすさ</label>
                         <StarRating
                           rating={feedbackForm.usability_score}
-                          onRatingChange={(rating) => setFeedbackForm(prev => ({ ...prev, usability_score: rating }))}
+                          onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, usability_score: rating }))}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-left mb-2">創造性</label>
                         <StarRating
                           rating={feedbackForm.creativity_score}
-                          onRatingChange={(rating) => setFeedbackForm(prev => ({ ...prev, creativity_score: rating }))}
+                          onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, creativity_score: rating }))}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-left mb-2">有用性</label>
                         <StarRating
                           rating={feedbackForm.usefulness_score}
-                          onRatingChange={(rating) => setFeedbackForm(prev => ({ ...prev, usefulness_score: rating }))}
+                          onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, usefulness_score: rating }))}
                         />
                       </div>
                     </div>
@@ -450,7 +510,7 @@ export default function AppDetail() {
                       <label className="block text-sm font-medium text-left mb-2">総合評価</label>
                       <StarRating
                         rating={feedbackForm.overall_score}
-                        onRatingChange={(rating) => setFeedbackForm(prev => ({ ...prev, overall_score: rating }))}
+                        onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, overall_score: rating }))}
                       />
                     </div>
 
@@ -503,13 +563,35 @@ export default function AppDetail() {
               <CardContent>
                 <div className="flex items-center space-x-3 mb-4">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={user?.profile_image_url ? `${user.profile_image_url}?t=${Date.now()}` : "/placeholder.svg"} />
+                    <AvatarImage src={app.user.profile_image_url || "/placeholder.svg"} alt={app.user.username} />
                     <AvatarFallback>{app.user.username[0]}</AvatarFallback>
                   </Avatar>
                   <div>
                     <h4 className="font-semibold text-left">{app.user.username}</h4>
-                    <p className="text-sm text-gray-500 text-left">開発者</p>
                   </div>
+                </div>
+                {/* 自己紹介 */}
+                {app.user.bio && (
+                  <div className="mb-2 text-left text-sm text-gray-700">
+                    <span className="font-medium"></span>{app.user.bio}
+                  </div>
+                )}
+                {/* GitHub/Twitterボタン */}
+                <div className="flex space-x-2 mb-2">
+                  {app.user.github_url && (
+                    <Button asChild size="sm" variant="outline">
+                      <a href={app.user.github_url} target="_blank" rel="noopener noreferrer">
+                        GitHub
+                      </a>
+                    </Button>
+                  )}
+                  {app.user.twitter_url && (
+                    <Button asChild size="sm" variant="outline">
+                      <a href={app.user.twitter_url} target="_blank" rel="noopener noreferrer">
+                        X
+                      </a>
+                    </Button>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-sm">

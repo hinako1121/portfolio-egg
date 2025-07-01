@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@radix-ui/react-separator": "^1.1.7"
+    "@radix-ui/react-separator": "^1.1.7",
+    "@tailwindcss/line-clamp": "^0.4.4"
   }
 }

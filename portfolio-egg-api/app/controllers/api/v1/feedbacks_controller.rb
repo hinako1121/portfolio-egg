@@ -37,7 +37,7 @@ module Api
         if feedback
           render json: feedback.as_json(include: { user: { only: [:id, :username] } })
         else
-          render json: { feedback: null }
+          render json: { feedback: nil }
         end
       end
 
