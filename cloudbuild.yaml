@@ -3,7 +3,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', 'gcr.io/$PROJECT_ID/portfolio-egg-api',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api',
       '--build-arg', 'RAILS_MASTER_KEY=$$RAILS_MASTER_KEY',
       './portfolio-egg-api',
       '-f', './portfolio-egg-api/Dockerfile.production'
@@ -14,22 +14,22 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', 'gcr.io/$PROJECT_ID/portfolio-egg-frontend',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend',
       './portfolio-egg-frontend'
     ]
 
   # イメージをプッシュ
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/portfolio-egg-api']
+    args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api']
   
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/portfolio-egg-frontend']
+    args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend']
 
   # データベースマイグレーション実行
   - name: 'gcr.io/google-appengine/exec-wrapper'
     args: [
-      '-i', 'gcr.io/$PROJECT_ID/portfolio-egg-api',
-      '-s', '$PROJECT_ID:$_REGION:$_INSTANCE_NAME',
+      '-i', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api',
+      '-s', '${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}',
       '-e', 'RAILS_MASTER_KEY=$$RAILS_MASTER_KEY',
       '--', 'bundle', 'exec', 'rails', 'db:migrate'
     ]
@@ -39,10 +39,10 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     args: [
       'run', 'deploy', 'portfolio-egg-api',
-      '--image', 'gcr.io/$PROJECT_ID/portfolio-egg-api',
+      '--image', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api',
       '--platform', 'managed',
-      '--region', '$_REGION',
-      '--add-cloudsql-instances', '$PROJECT_ID:$_REGION:$_INSTANCE_NAME',
+      '--region', '${_REGION}',
+      '--add-cloudsql-instances', '${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}',
       '--allow-unauthenticated',
       '--port', '8080',
       '--set-env-vars', 'RAILS_ENV=production'
@@ -52,9 +52,9 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     args: [
       'run', 'deploy', 'portfolio-egg-frontend',
-      '--image', 'gcr.io/$PROJECT_ID/portfolio-egg-frontend',
+      '--image', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend',
       '--platform', 'managed',
-      '--region', '$_REGION',
+      '--region', '${_REGION}',
       '--allow-unauthenticated',
       '--port', '8080'
     ]
@@ -69,5 +69,5 @@ availableSecrets:
     env: 'RAILS_MASTER_KEY'
 
 images:
-  - 'gcr.io/$PROJECT_ID/portfolio-egg-api'
-  - 'gcr.io/$PROJECT_ID/portfolio-egg-frontend' 
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend' 

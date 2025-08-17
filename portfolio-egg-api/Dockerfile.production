@@ -8,6 +8,7 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
     git \
     libpq-dev \
     postgresql-client \
+    libyaml-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -25,14 +26,10 @@ COPY . .
 # 本番環境の設定
 ENV RAILS_ENV=production
 ENV RAILS_LOG_TO_STDOUT=true
-ENV RAILS_SERVE_STATIC_FILES=true
 
 # マスターキーの設定（Secret Managerから取得）
 ARG RAILS_MASTER_KEY
 ENV RAILS_MASTER_KEY=$RAILS_MASTER_KEY
-
-# アセットのプリコンパイル
-RUN bundle exec rails assets:precompile
 
 # ポート設定
 EXPOSE 8080

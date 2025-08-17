@@ -13,9 +13,26 @@ test:
   <<: *default
   database: portfolio_egg_api_test
 
-production:
+production: &production
   <<: *default
   database: <%= ENV["PRODUCTION_DB_NAME"] || "portfolio_egg_production" %>
   username: <%= ENV["PRODUCTION_DB_USERNAME"] || "portfolio_user" %>
-  password: <%= Rails.application.credentials.gcp&.dig(:db_password) %>
+  password: <%= ENV["PRODUCTION_DB_PASSWORD"] %>
+  <% if ENV["PRODUCTION_DB_HOST"] %>
+  host: <%= ENV["PRODUCTION_DB_HOST"] %>
+  port: <%= ENV["PRODUCTION_DB_PORT"] || 5432 %>
+  <% elsif ENV["CLOUD_SQL_CONNECTION_NAME"] %>
   host: <%= ENV.fetch("DB_SOCKET_DIR", "/cloudsql") %>/<%= ENV["CLOUD_SQL_CONNECTION_NAME"] %>
+  <% else %>
+  host: localhost
+  port: 5432
+  <% end %>
+
+cable:
+  <<: *production
+
+queue:
+  <<: *production
+
+cache:
+  <<: *production
