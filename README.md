@@ -77,7 +77,7 @@
 ## 🏗️ アーキテクチャ
 
 ```
-┌─────────────────┐    HTTPS    ┌─────────────────┐
+┌─────────────────┐    HTTPS     ┌─────────────────┐
 │                 │◄────────────►│                 │
 │   React SPA     │              │   Rails API     │
 │  (Cloud Run)    │              │  (Cloud Run)    │
@@ -320,33 +320,3 @@ STORAGE_BUCKET_NAME=portfolio-egg-storage
 
 # Rails
 RAILS_MASTER_KEY=<Secret Manager>
-```
-
-## 📝 開発ガイドライン
-
-### コーディング規約
-- **Ruby**: Rubocop準拠
-- **TypeScript**: ESLint + Prettier
-- **CSS**: Tailwind CSS クラス使用
-
-### Git ワークフロー
-```bash
-# 機能開発
-git checkout -b feature/new-feature
-git commit -m "feat: add new feature"
-git push origin feature/new-feature
-
-# プルリクエスト作成・マージ後
-git checkout main
-git pull origin main
-```
-
-### テスト実行
-```bash
-# バックエンドテスト
-cd portfolio-egg-api
-bundle exec rspec
-
-# フロントエンドテスト
-cd portfolio-egg-frontend
-npm test

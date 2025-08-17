@@ -1,0 +1,40 @@
+steps:
+  # Rails APIのビルドのみ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api',
+      '--build-arg', 'RAILS_MASTER_KEY=$$RAILS_MASTER_KEY',
+      './portfolio-egg-api',
+      '-f', './portfolio-egg-api/Dockerfile.production'
+    ]
+    secretEnv: ['RAILS_MASTER_KEY']
+
+  # イメージをプッシュ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api']
+
+  # Rails APIをCloud Runにデプロイ
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run', 'deploy', 'portfolio-egg-api',
+      '--image', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api',
+      '--platform', 'managed',
+      '--region', '${_REGION}',
+      '--add-cloudsql-instances', '${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}',
+      '--allow-unauthenticated',
+      '--port', '8080',
+      '--set-env-vars', 'RAILS_ENV=production'
+    ]
+
+substitutions:
+  _REGION: asia-northeast1
+  _INSTANCE_NAME: portfolio-egg-db
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_ID}/secrets/rails-master-key/versions/latest
+    env: 'RAILS_MASTER_KEY'
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-api' 

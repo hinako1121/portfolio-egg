@@ -1,0 +1,30 @@
+steps:
+  # React フロントエンドのビルドのみ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend',
+      '--build-arg', 'VITE_API_URL=https://portfolio-egg-api-258631948423.asia-northeast1.run.app',
+      './portfolio-egg-frontend'
+    ]
+
+  # イメージをプッシュ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend']
+
+  # React フロントエンドをCloud Runにデプロイ
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run', 'deploy', 'portfolio-egg-frontend',
+      '--image', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend',
+      '--platform', 'managed',
+      '--region', '${_REGION}',
+      '--allow-unauthenticated',
+      '--port', '8080'
+    ]
+
+substitutions:
+  _REGION: asia-northeast1
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/portfolio-egg-repo/portfolio-egg-frontend' 
