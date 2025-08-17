@@ -61,10 +61,22 @@ module Api
 
         is_owner = current_api_v1_user && app.user_id == current_api_v1_user.id
 
+        # 各バージョン・各フィードバックのuserにprofile_image_urlを付与
+        app_versions_json = app_versions.map do |version|
+          version_json = version.as_json
+          version_json["feedbacks"] = version.feedbacks.includes(:user).order(created_at: :desc).map do |fb|
+            fb_json = fb.as_json
+            fb_json["user"] = fb.user.as_json(only: [:id, :username])
+            fb_json["user"]["profile_image_url"] = fb.user.profile_image.attached? ? url_for(fb.user.profile_image) : nil
+            fb_json
+          end
+          version_json
+        end
+
         render json: app.as_json.merge(
           user: user_data,
           thumbnail_url: app.thumbnail_image.attached? ? url_for(app.thumbnail_image) : nil,
-          app_versions: app_versions.as_json(include: { feedbacks: { include: { user: { only: [:id, :username] } } } }),
+          app_versions: app_versions_json,
           is_owner: is_owner
         )
       end

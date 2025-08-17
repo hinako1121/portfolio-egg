@@ -18,6 +18,8 @@ import {
   ChevronUp,
   Send,
   Edit,
+  ImageIcon,
+  Twitter,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { api, type AppDetail as AppDetailType, type CreateFeedbackData, type Feedback } from "@/lib/api";
@@ -135,16 +137,12 @@ export default function AppDetail() {
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!app || !isAuthenticated) return;
-
-    // 最新のバージョンにフィードバックを投稿
-    const latestVersion = app.app_versions[0];
-    if (!latestVersion) return;
+    if (!app || !isAuthenticated || !selectedVersionId) return;
 
     setIsSubmitting(true);
 
     try {
-      await api.feedbacks.create(latestVersion.id, feedbackForm);
+      await api.feedbacks.create(selectedVersionId, feedbackForm);
       alert(hasExistingFeedback ? "フィードバックを更新しました！" : "フィードバックを投稿しました！");
       
       // 既存フィードバックフラグを更新
@@ -153,6 +151,10 @@ export default function AppDetail() {
       // アプリデータを再取得
       const updatedData = await api.apps.get(parseInt(id!));
       setApp(updatedData);
+      
+      // 選択されたバージョンの既存フィードバックを再取得
+      const newExistingFeedback = await api.feedbacks.myFeedback(selectedVersionId);
+      setExistingFeedback(newExistingFeedback);
     } catch (error: any) {
       if (error.response?.data?.errors) {
         alert("エラー: " + Object.values(error.response.data.errors).flat().join(', '));
@@ -184,6 +186,55 @@ export default function AppDetail() {
       setExpandedVersions(new Set(app.app_versions.map(v => v.id)));
       setAllExpanded(true);
     }
+  };
+
+  // バージョン変更時の処理
+  const handleVersionChange = async (versionId: string) => {
+    const newVersionId = Number(versionId);
+    setSelectedVersionId(newVersionId);
+
+    // 選択されたバージョンの既存フィードバックを取得
+    if (isAuthenticated) {
+      try {
+        const existingFeedback = await api.feedbacks.myFeedback(newVersionId);
+        setExistingFeedback(existingFeedback);
+        setHasExistingFeedback(!!existingFeedback);
+      } catch (error: any) {
+        console.error('既存フィードバックの取得に失敗しました:', error);
+        setExistingFeedback(null);
+        setHasExistingFeedback(false);
+      }
+    } else {
+      setExistingFeedback(null);
+      setHasExistingFeedback(false);
+    }
+  };
+
+  // 選択されたバージョンの統計を計算する関数
+  const getSelectedVersionStats = () => {
+    if (!selectedVersionId || !app) {
+      return {
+        averageScore: 0,
+        feedbackCount: 0
+      };
+    }
+    
+    const selectedVersion = app.app_versions.find(v => v.id === selectedVersionId);
+    if (!selectedVersion || !selectedVersion.feedbacks.length) {
+      return {
+        averageScore: 0,
+        feedbackCount: 0
+      };
+    }
+    
+    const feedbacks = selectedVersion.feedbacks;
+    const totalScore = feedbacks.reduce((sum, feedback) => sum + feedback.overall_score, 0);
+    const averageScore = totalScore / feedbacks.length;
+    
+    return {
+      averageScore: Math.round(averageScore * 10) / 10, // 小数点第1位まで
+      feedbackCount: feedbacks.length
+    };
   };
 
   const StarRating = ({
@@ -258,9 +309,9 @@ export default function AppDetail() {
     .sort((a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime());
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* ナビゲーションバー */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -272,15 +323,15 @@ export default function AppDetail() {
             </div>
             {app.is_owner && (
               <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link to={`/apps/${id}/edit`}>
-                    <Edit className="w-4 h-4 mr-2" />
-                    編集
-                  </Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link to={`/apps/${id}/versions/new`}>バージョン追加</Link>
-                </Button>
+                                  <Button variant="outline" className="bg-white" size="sm" asChild>
+                    <Link to={`/apps/${id}/edit`}>
+                      <Edit className="w-4 h-4 mr-2" />
+                      編集
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="bg-white" asChild>
+                    <Link to={`/apps/${id}/versions/new`}>バージョン追加</Link>
+                  </Button>
               </div>
             )}
           </div>
@@ -292,7 +343,7 @@ export default function AppDetail() {
           {/* メインコンテンツ */}
           <div className="lg:col-span-2 space-y-8">
             {/* アプリ基本情報 */}
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -310,16 +361,22 @@ export default function AppDetail() {
                 </div>
               </CardHeader>
               <CardContent>
-                <img
-                  src={app.thumbnail_url || "/placeholder.svg"}
-                  alt={app.title}
-                  className="w-full h-64 object-cover rounded-lg mb-6"
-                />
+                <div className="w-full h-64 bg-white/90 rounded-lg mb-6 flex items-center justify-center overflow-hidden">
+                  {app.thumbnail_url ? (
+                    <img
+                      src={app.thumbnail_url}
+                      alt={app.title}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <ImageIcon className="w-24 h-24 text-gray-400" />
+                  )}
+                </div>
 
                 {/* アクションボタン */}
                 <div className="flex space-x-4 mb-6">
                   {app.deploy_url && (
-                    <Button asChild className="flex-1">
+                    <Button asChild className="flex-1 bg-stone-600 hover:bg-stone-700 text-white">
                       <a href={app.deploy_url} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="w-4 h-4 mr-2" />
                         アプリを開く
@@ -327,7 +384,7 @@ export default function AppDetail() {
                     </Button>
                   )}
                   {app.github_url && (
-                    <Button variant="outline" asChild className="flex-1 bg-transparent">
+                    <Button variant="outline" asChild className="flex-1 bg-white">
                       <a href={app.github_url} target="_blank" rel="noopener noreferrer">
                         <Github className="w-4 h-4 mr-2" />
                         GitHub
@@ -344,13 +401,13 @@ export default function AppDetail() {
             </Card>
 
             {/* バージョン履歴 */}
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-left">バージョン履歴</CardTitle>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setVersionListOpen((prev) => !prev)}>
+                  <Button variant="ghost" className="bg-white" size="sm" onClick={() => setVersionListOpen((prev) => !prev)}>
                     {versionListOpen ? (
                       <>
                         <ChevronUp className="w-4 h-4 mr-1" />すべて閉じる
@@ -379,7 +436,7 @@ export default function AppDetail() {
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <div className="pl-8 pb-4">
-                            <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 bg-gray-50 p-3 rounded text-left">{version.changelog}</pre>
+                            <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 p-3 text-left">{version.changelog}</pre>
                           </div>
                         </CollapsibleContent>
                       </Collapsible>
@@ -390,14 +447,14 @@ export default function AppDetail() {
             </Card>
 
             {/* フィードバック絞り込み */}
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
                 <CardTitle className="text-left">フィードバック</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="mb-4">
-                  <Select value={selectedVersionId?.toString() || ""} onValueChange={v => setSelectedVersionId(Number(v))}>
-                    <SelectTrigger className="w-64">
+                  <Select value={selectedVersionId?.toString() || ""} onValueChange={handleVersionChange}>
+                    <SelectTrigger className="w-64 bg-white">
                       <SelectValue placeholder="バージョンを選択" />
                     </SelectTrigger>
                     <SelectContent>
@@ -416,11 +473,11 @@ export default function AppDetail() {
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center space-x-2">
                             <Avatar className="w-8 h-8">
-                              <AvatarImage src={app.user.profile_image_url || "/placeholder.svg"} alt={app.user.username} />
-                              <AvatarFallback>{app.user.username[0]}</AvatarFallback>
+                              <AvatarImage src={feedback.user.profile_image_url} alt={feedback.user.username} />
+                              <AvatarFallback>{feedback.user.username[0]}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="font-medium text-left">{app.user.username}</p>
+                              <p className="font-medium text-left">{feedback.user.username}</p>
                               <p className="text-sm text-gray-500 text-left">{formatRelativeTime(feedback.created_at)}</p>
                             </div>
                           </div>
@@ -447,7 +504,7 @@ export default function AppDetail() {
 
             {/* フィードバック投稿フォーム */}
             {isAuthenticated && (
-              <Card>
+              <Card className="bg-white">
                 <CardHeader>
                   <CardTitle className="text-left">
                     {hasExistingFeedback ? "フィードバックを更新" : "フィードバックを投稿"}
@@ -469,6 +526,7 @@ export default function AppDetail() {
                         placeholder="アプリについての感想や改善点を書いてください..."
                         rows={4}
                         required
+                        className="bg-white"
                       />
                     </div>
 
@@ -514,7 +572,7 @@ export default function AppDetail() {
                       />
                     </div>
 
-                    <Button type="submit" disabled={isSubmitting} className="w-full">
+                    <Button type="submit" disabled={isSubmitting} className="w-full bg-stone-600 hover:bg-stone-700 text-white">
                       {isSubmitting ? (
                         <>
                           <Send className="w-4 h-4 mr-2 animate-spin" />
@@ -533,7 +591,7 @@ export default function AppDetail() {
             )}
 
             {!isAuthenticated && (
-              <Card>
+              <Card className="bg-white">
                 <CardHeader>
                   <CardTitle className="text-left">フィードバックを投稿</CardTitle>
                   <CardDescription className="text-left">フィードバックを投稿するにはログインが必要です</CardDescription>
@@ -556,7 +614,7 @@ export default function AppDetail() {
           {/* サイドバー */}
           <div className="space-y-6">
             {/* 開発者情報 */}
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
                 <CardTitle className="text-left">開発者</CardTitle>
               </CardHeader>
@@ -576,23 +634,24 @@ export default function AppDetail() {
                     <span className="font-medium"></span>{app.user.bio}
                   </div>
                 )}
-                {/* GitHub/Twitterボタン */}
-                <div className="flex space-x-2 mb-2">
-                  {app.user.github_url && (
-                    <Button asChild size="sm" variant="outline">
-                      <a href={app.user.github_url} target="_blank" rel="noopener noreferrer">
-                        GitHub
-                      </a>
-                    </Button>
-                  )}
-                  {app.user.twitter_url && (
-                    <Button asChild size="sm" variant="outline">
-                      <a href={app.user.twitter_url} target="_blank" rel="noopener noreferrer">
-                        X
-                      </a>
-                    </Button>
-                  )}
-                </div>
+                  <div className="flex justify-start items-center gap-6 mb-4">
+                    {app.user.github_url && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Github className="w-4 h-4 text-gray-400" />
+                        <a href={app.user.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          GitHub
+                        </a>
+                      </div>
+                    )}
+                    {app.user.twitter_url && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Twitter className="w-4 h-4 text-gray-400" />
+                        <a href={app.user.twitter_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          X
+                        </a>
+                      </div>
+                    )}
+                  </div>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-sm">
                     <Calendar className="w-4 h-4 text-gray-400" />
@@ -607,23 +666,43 @@ export default function AppDetail() {
             </Card>
 
             {/* 統計情報 */}
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
                 <CardTitle className="text-left">統計</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">総合評価</span>
-                    <div className="flex items-center space-x-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium">{app.overall_score}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">フィードバック数</span>
-                    <span className="font-medium">{app.feedback_count}</span>
-                  </div>
+                  {selectedVersionId ? (
+                    <>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">総合評価</span>
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="font-medium">
+                            {getSelectedVersionStats().averageScore || "未評価"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">フィードバック数</span>
+                        <span className="font-medium">{getSelectedVersionStats().feedbackCount}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">全体の総合評価</span>
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="font-medium">{app.overall_score || "未評価"}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">全体のフィードバック数</span>
+                        <span className="font-medium">{app.feedback_count}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">バージョン数</span>
                     <span className="font-medium">{app.app_versions.length}</span>

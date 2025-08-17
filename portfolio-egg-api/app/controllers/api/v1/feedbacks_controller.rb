@@ -6,7 +6,13 @@ module Api
 
       def index
         feedbacks = @app_version.feedbacks.includes(:user).order(created_at: :desc)
-        render json: feedbacks.as_json(include: { user: { only: [:id, :username] } })
+        render json: feedbacks.as_json(include: { user: { only: [:id, :username] } }).map { |fb|
+          if fb["user"]
+            user = @app_version.feedbacks.find(fb["id"]).user
+            fb["user"]["profile_image_url"] = user.profile_image.attached? ? url_for(user.profile_image) : nil
+          end
+          fb
+        }
       end
 
       def create
@@ -16,7 +22,10 @@ module Api
         if existing_feedback
           # 既存のフィードバックを更新
           if existing_feedback.update(feedback_params)
-            render json: existing_feedback.as_json(include: { user: { only: [:id, :username] } })
+            fb = existing_feedback.as_json(include: { user: { only: [:id, :username] } })
+            user = existing_feedback.user
+            fb["user"]["profile_image_url"] = user.profile_image.attached? ? url_for(user.profile_image) : nil
+            render json: fb
           else
             render json: { errors: existing_feedback.errors.full_messages }, status: :unprocessable_entity
           end
@@ -24,7 +33,10 @@ module Api
           # 新しいフィードバックを作成
           feedback = @app_version.feedbacks.new(feedback_params.merge(user: current_api_v1_user))
           if feedback.save
-            render json: feedback.as_json(include: { user: { only: [:id, :username] } }), status: :created
+            fb = feedback.as_json(include: { user: { only: [:id, :username] } })
+            user = feedback.user
+            fb["user"]["profile_image_url"] = user.profile_image.attached? ? url_for(user.profile_image) : nil
+            render json: fb, status: :created
           else
             render json: { errors: feedback.errors.full_messages }, status: :unprocessable_entity
           end
@@ -35,7 +47,10 @@ module Api
       def my_feedback
         feedback = @app_version.feedbacks.find_by(user: current_api_v1_user)
         if feedback
-          render json: feedback.as_json(include: { user: { only: [:id, :username] } })
+          fb = feedback.as_json(include: { user: { only: [:id, :username] } })
+          user = feedback.user
+          fb["user"]["profile_image_url"] = user.profile_image.attached? ? url_for(user.profile_image) : nil
+          render json: { feedback: fb }
         else
           render json: { feedback: nil }
         end

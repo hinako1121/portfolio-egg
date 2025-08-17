@@ -158,9 +158,9 @@ export default function NewApp() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* ナビゲーションバー */}
-      <nav className="bg-white shadow-sm border-b">
+              <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -183,7 +183,7 @@ export default function NewApp() {
                 {/* メインフォーム */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* 基本情報 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">基本情報</CardTitle>
                       <CardDescription className="text-left">アプリの基本的な情報を入力してください</CardDescription>
@@ -198,7 +198,7 @@ export default function NewApp() {
                           value={formData.title}
                           onChange={(e) => handleInputChange("title", e.target.value)}
                           placeholder="例: タスク管理アプリ"
-                          className={`w-full ${errors.title ? "border-red-500" : ""}`}
+                                                      className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.title ? "border-red-500" : ""}`}
                         />
                         {errors.title && <p className="text-sm text-red-500 mt-1">{errors.title}</p>}
                       </div>
@@ -213,7 +213,7 @@ export default function NewApp() {
                           onChange={(e) => handleInputChange("description", e.target.value)}
                           placeholder="アプリの機能や特徴を詳しく説明してください..."
                           rows={4}
-                          className={`w-full ${errors.description ? "border-red-500" : ""}`}
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.description ? "border-red-500" : ""}`}
                         />
                         {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description}</p>}
                       </div>
@@ -223,10 +223,10 @@ export default function NewApp() {
                           カテゴリ <span className="text-red-500">*</span>
                         </Label>
                         <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                          <SelectTrigger className={`w-full ${errors.category ? "border-red-500" : ""}`}>
+                          <SelectTrigger className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.category ? "border-red-500" : ""}`}>
                             <SelectValue placeholder="カテゴリを選択" />
                           </SelectTrigger>
-                          <SelectContent>
+                                                      <SelectContent className="bg-white/90">
                             {categories.map((category) => (
                               <SelectItem key={category} value={category}>
                                 {category}
@@ -240,7 +240,7 @@ export default function NewApp() {
                   </Card>
 
                   {/* サムネイル画像 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">サムネイル画像</CardTitle>
                       <CardDescription className="text-left">アプリのサムネイル画像を設定してください</CardDescription>
@@ -295,7 +295,7 @@ export default function NewApp() {
                           id="thumbnail-upload"
                         />
                         <Label htmlFor="thumbnail-upload">
-                          <Button type="button" variant="outline" size="sm" asChild>
+                                                      <Button type="button" variant="outline" className="bg-white" size="sm" asChild>
                             <span>
                               <Upload className="w-4 h-4 mr-2" />
                               ファイルを選択
@@ -313,7 +313,7 @@ export default function NewApp() {
                   </Card>
 
                   {/* リンク情報 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">リンク情報</CardTitle>
                       <CardDescription className="text-left">GitHubリポジトリや公開先URLを入力してください（任意）</CardDescription>
@@ -329,7 +329,7 @@ export default function NewApp() {
                           value={formData.github_url}
                           onChange={(e) => handleInputChange("github_url", e.target.value)}
                           placeholder="https://github.com/username/repository"
-                          className={`w-full ${errors.github_url ? "border-red-500" : ""}`}
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.github_url ? "border-red-500" : ""}`}
                         />
                         {errors.github_url && <p className="text-sm text-red-500 mt-1">{errors.github_url}</p>}
                       </div>
@@ -344,7 +344,7 @@ export default function NewApp() {
                           value={formData.deploy_url}
                           onChange={(e) => handleInputChange("deploy_url", e.target.value)}
                           placeholder="https://your-app.vercel.app"
-                          className={`w-full ${errors.deploy_url ? "border-red-500" : ""}`}
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.deploy_url ? "border-red-500" : ""}`}
                         />
                         {errors.deploy_url && <p className="text-sm text-red-500 mt-1">{errors.deploy_url}</p>}
                       </div>
@@ -352,7 +352,7 @@ export default function NewApp() {
                   </Card>
 
                   {/* バージョン情報 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">バージョン情報</CardTitle>
                       <CardDescription className="text-left">初回リリースのバージョン番号</CardDescription>
@@ -375,10 +375,10 @@ export default function NewApp() {
 
               {/* 投稿ボタン */}
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                <Button type="button" variant="outline" asChild>
-                  <Link to="/">キャンセル</Link>
-                </Button>
-                <Button type="submit" disabled={isSubmitting} className="min-w-32">
+                                  <Button type="button" variant="outline" className="bg-white" asChild>
+                    <Link to="/">キャンセル</Link>
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white">
                   {isSubmitting ? (
                     <>
                       <Save className="w-4 h-4 mr-2 animate-spin" />
@@ -394,7 +394,7 @@ export default function NewApp() {
               </div>
 
               {/* 注意事項 */}
-              <Alert className="w-full max-w-none">
+                              <Alert className="w-full max-w-none bg-white">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   投稿されたアプリは他のユーザーに公開され、フィードバックを受け取ることができます。

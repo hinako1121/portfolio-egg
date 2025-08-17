@@ -48,6 +48,7 @@ export interface Feedback {
   user: {
     id: number;
     username: string;
+    profile_image_url?: string;
   };
   created_at: string;
 }
@@ -164,8 +165,11 @@ export const api = {
       formData.append('app[title]', data.title);
       formData.append('app[description]', data.description);
       formData.append('app[category]', data.category);
-      if (data.github_url) formData.append('app[github_url]', data.github_url);
-      if (data.deploy_url) formData.append('app[deploy_url]', data.deploy_url);
+      // URLフィールドは空文字列でも明示的に送信（example.comは除外）
+      const githubUrl = (data.github_url === 'https://example.com' || !data.github_url) ? '' : data.github_url;
+      const deployUrl = (data.deploy_url === 'https://example.com' || !data.deploy_url) ? '' : data.deploy_url;
+      formData.append('app[github_url]', githubUrl);
+      formData.append('app[deploy_url]', deployUrl);
       if (data.thumbnail_image) formData.append('app[thumbnail_image]', data.thumbnail_image);
 
       const response = await axiosInstance.post('/api/v1/apps', formData, {
@@ -180,8 +184,11 @@ export const api = {
       formData.append('app[title]', data.title);
       formData.append('app[description]', data.description);
       formData.append('app[category]', data.category);
-      if (data.github_url) formData.append('app[github_url]', data.github_url);
-      if (data.deploy_url) formData.append('app[deploy_url]', data.deploy_url);
+      // URLフィールドは空文字列でも明示的に送信（example.comは除外）
+      const githubUrl = (data.github_url === 'https://example.com' || !data.github_url) ? '' : data.github_url;
+      const deployUrl = (data.deploy_url === 'https://example.com' || !data.deploy_url) ? '' : data.deploy_url;
+      formData.append('app[github_url]', githubUrl);
+      formData.append('app[deploy_url]', deployUrl);
       if (data.thumbnail_image) formData.append('app[thumbnail_image]', data.thumbnail_image);
 
       const response = await axiosInstance.patch(`/api/v1/apps/${id}`, formData, {
@@ -252,7 +259,8 @@ export const api = {
     // ユーザーの既存フィードバック取得
     myFeedback: async (versionId: number): Promise<Feedback | null> => {
       const response = await axiosInstance.get(`/api/v1/app_versions/${versionId}/feedbacks/my_feedback`);
-      return response.data;
+      // バックエンドは常に { feedback: フィードバックオブジェクト | null } の形式で返す
+      return response.data.feedback;
     }
   },
 

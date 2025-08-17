@@ -16,6 +16,7 @@ import {
   Github,
   ExternalLink,
   Twitter,
+  ImageIcon,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -97,18 +98,18 @@ export default function AppList() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* ナビゲーションバー */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">🥚 ポートフォリオのたまご</h1>
+              <h1 className="text-2xl font-bold text-gray-900">🥚 Portfolio Egg</h1>
             </div>
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
-                  <Button variant="outline" size="sm" asChild>
+                  <Button variant="outline" className="bg-white" size="sm" asChild>
                     <Link to="/apps/new">
                       <Plus className="w-4 h-4 mr-2" />
                       投稿する
@@ -132,10 +133,10 @@ export default function AppList() {
                 </>
               ) : (
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" asChild>
+                  <Button variant="outline" className="bg-white" size="sm" asChild>
                     <Link to="/login">ログイン</Link>
                   </Button>
-                  <Button size="sm" asChild>
+                  <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white">
                     <Link to="/signup">新規登録</Link>
                   </Button>
                 </div>
@@ -147,7 +148,7 @@ export default function AppList() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="explore" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 bg-orange-100">
             <TabsTrigger value="explore">アプリを探す</TabsTrigger>
             <TabsTrigger value="dashboard">マイページ</TabsTrigger>
           </TabsList>
@@ -162,15 +163,15 @@ export default function AppList() {
                   placeholder="アプリを検索..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white"
                 />
               </div>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className="w-full sm:w-48 bg-white">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="カテゴリ" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white/90">
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category === "all" ? "すべて" : category}
@@ -179,10 +180,10 @@ export default function AppList() {
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className="w-full sm:w-48 bg-white">
                   <SelectValue placeholder="並び順" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white/90">
                   <SelectItem value="newest">新着順</SelectItem>
                   <SelectItem value="popular">人気順</SelectItem>
                   <SelectItem value="feedback">フィードバック数順</SelectItem>
@@ -200,13 +201,19 @@ export default function AppList() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {paginatedApps.map((app) => (
                     <Link key={app.id} to={`/apps/${app.id}`}>
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-[28rem] flex flex-col justify-between">
+                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-[28rem] flex flex-col justify-between bg-white">
                         <CardHeader className="p-0">
-                          <img
-                            src={app.thumbnail_url || "/placeholder.svg"}
-                            alt={app.title}
-                            className="w-full h-48 object-cover rounded-t-lg"
-                          />
+                          <div className="w-full h-48 bg-white/90 rounded-t-lg flex items-center justify-center overflow-hidden">
+                            {app.thumbnail_url ? (
+                              <img
+                                src={app.thumbnail_url}
+                                alt={app.title}
+                                className="w-full h-full object-contain"
+                              />
+                            ) : (
+                              <ImageIcon className="w-16 h-16 text-gray-400" />
+                            )}
+                          </div>
                         </CardHeader>
                         <CardContent className="p-4 flex-1 flex flex-col">
                           <div className="flex items-start justify-between mb-2">
@@ -239,7 +246,7 @@ export default function AppList() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="flex-1 min-w-0"
+                                className="flex-1 min-w-0 bg-white"
                                 onClick={e => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -254,7 +261,7 @@ export default function AppList() {
                             {app.deploy_url ? (
                               <Button
                                 size="sm"
-                                className="flex-1 min-w-0"
+                                className="flex-1 min-w-0 bg-stone-600 hover:bg-stone-700 text-white"
                                 onClick={e => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -275,7 +282,7 @@ export default function AppList() {
                 {/* ページネーションUI */}
                 {totalPages > 1 && (
                   <div className="flex justify-center items-center mt-8 space-x-2">
-                    <Button size="sm" variant="outline" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                    <Button size="sm" variant="outline" className="bg-white" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
                       前へ
                     </Button>
                     {Array.from({ length: totalPages }, (_, i) => (
@@ -283,12 +290,13 @@ export default function AppList() {
                         key={i + 1}
                         size="sm"
                         variant={currentPage === i + 1 ? "default" : "outline"}
+                        className={currentPage === i + 1 ? "bg-stone-600 hover:bg-stone-700 text-white" : "bg-white"}
                         onClick={() => setCurrentPage(i + 1)}
                       >
                         {i + 1}
                       </Button>
                     ))}
-                    <Button size="sm" variant="outline" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                    <Button size="sm" variant="outline" className="bg-white" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
                       次へ
                     </Button>
                   </div>
@@ -302,7 +310,7 @@ export default function AppList() {
             {isAuthenticated ? (
               <>
                 {/* プロフィールセクション */}
-                <Card>
+                <Card className="bg-white">
                   <CardHeader>
                     <CardTitle className="text-left">プロフィール</CardTitle>
                   </CardHeader>
@@ -315,24 +323,26 @@ export default function AppList() {
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-left">{user?.username}</h3>
                         <p className="text-gray-600 mb-3 text-left">{user?.bio || 'プロフィールが設定されていません'}</p>
-                        <div className="flex items-center space-x-2 mb-2">
+                        <div className="flex justify-start items-center gap-6 mb-4">
                           {user?.github_url && (
-                            <Button variant="outline" size="sm" asChild className="flex items-center gap-1">
-                              <a href={user.github_url} target="_blank" rel="noopener noreferrer">
-                                <Github className="w-4 h-4" />GitHub
+                            <div className="flex items-center space-x-2 text-sm">
+                              <Github className="w-4 h-4 text-gray-400" />
+                              <a href={user.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                GitHub
                               </a>
-                            </Button>
+                            </div>
                           )}
                           {user?.twitter_url && (
-                            <Button variant="outline" size="sm" asChild className="flex items-center gap-1">
-                              <a href={user.twitter_url} target="_blank" rel="noopener noreferrer">
-                                <Twitter className="w-4 h-4" />X
+                            <div className="flex items-center space-x-2 text-sm">
+                              <Twitter className="w-4 h-4 text-gray-400" />
+                              <a href={user.twitter_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                X
                               </a>
-                            </Button>
+                            </div>
                           )}
                         </div>
                         <div className="flex justify-end">
-                          <Button variant="default" size="sm" asChild>
+                          <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white">
                             <Link to="/profile/edit">プロフィール編集</Link>
                           </Button>
                         </div>
@@ -342,11 +352,11 @@ export default function AppList() {
                 </Card>
 
                 {/* 投稿したアプリ */}
-                <Card>
+                <Card className="bg-white">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-left">投稿したアプリ</CardTitle>
-                      <Button size="sm" asChild>
+                      <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white">
                         <Link to="/apps/new">
                           <Plus className="w-4 h-4 mr-2" />
                           新しいアプリを投稿
@@ -365,11 +375,17 @@ export default function AppList() {
                           <div key={app.id} className="flex items-center space-x-4 p-4 border rounded-lg">
                             <Link to={`/apps/${app.id}`} className="flex-1">
                               <div className="flex items-center space-x-4">
+                                                            <div className="w-16 h-16 bg-white/90 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                              {app.thumbnail_url ? (
                                 <img
-                                  src={app.thumbnail_url || "/placeholder.svg"}
+                                  src={app.thumbnail_url}
                                   alt={app.title}
-                                  className="w-16 h-16 object-cover rounded"
+                                  className="w-full h-full object-contain"
                                 />
+                              ) : (
+                                <ImageIcon className="w-8 h-8 text-gray-400" />
+                              )}
+                            </div>
                                 <div className="flex-1">
                                   <h4 className="font-semibold text-left">{app.title}</h4>
                                   <p className="text-sm text-gray-600 mb-1 text-left">{app.description}</p>
@@ -388,12 +404,12 @@ export default function AppList() {
                               </div>
                             </Link>
                             <div className="flex space-x-2">
-                              <Button size="sm" variant="outline" asChild>
-                                <Link to={`/apps/${app.id}/edit`}>編集</Link>
-                              </Button>
-                              <Button size="sm" variant="outline" asChild>
-                                <Link to={`/apps/${app.id}/versions/new`}>バージョン追加</Link>
-                              </Button>
+                                                    <Button size="sm" variant="outline" className="bg-white" asChild>
+                        <Link to={`/apps/${app.id}/edit`}>編集</Link>
+                      </Button>
+                      <Button size="sm" variant="outline" className="bg-white" asChild>
+                        <Link to={`/apps/${app.id}/versions/new`}>バージョン追加</Link>
+                      </Button>
                               <Button size="sm" variant="destructive" onClick={async (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -416,7 +432,7 @@ export default function AppList() {
                     ) : (
                       <div className="text-center py-8">
                         <p className="text-gray-600 mb-4">まだアプリを投稿していません</p>
-                        <Button asChild>
+                        <Button asChild className="bg-stone-600 hover:bg-stone-700 text-white">
                           <Link to="/apps/new">
                             <Plus className="w-4 h-4 mr-2" />
                             最初のアプリを投稿
@@ -431,10 +447,10 @@ export default function AppList() {
               <div className="text-center py-8">
                 <p className="text-gray-600 mb-4">ログインしてマイページを利用してください</p>
                 <div className="flex justify-center space-x-4">
-                  <Button asChild>
+                  <Button asChild className="bg-stone-600 hover:bg-stone-700 text-white">
                     <Link to="/login">ログイン</Link>
                   </Button>
-                  <Button variant="outline" asChild>
+                  <Button variant="outline" asChild className="bg-white">
                     <Link to="/signup">新規登録</Link>
                   </Button>
                 </div>

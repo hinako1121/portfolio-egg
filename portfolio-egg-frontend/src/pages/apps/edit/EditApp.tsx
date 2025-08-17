@@ -236,9 +236,9 @@ export default function EditApp() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* ナビゲーションバー */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -261,7 +261,7 @@ export default function EditApp() {
                 {/* メインフォーム */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* 基本情報 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">基本情報</CardTitle>
                       <CardDescription className="text-left">アプリの基本的な情報を編集してください</CardDescription>
@@ -273,10 +273,12 @@ export default function EditApp() {
                         </Label>
                         <Input
                           id="title"
+                          type="text"
                           value={formData.title}
                           onChange={(e) => handleInputChange("title", e.target.value)}
                           placeholder="例: タスク管理アプリ"
-                          className={`w-full ${errors.title ? "border-red-500" : ""}`}
+                          className={`w-full bg-white ${errors.title ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.title && <p className="text-sm text-red-500 mt-1">{errors.title}</p>}
                       </div>
@@ -291,7 +293,8 @@ export default function EditApp() {
                           onChange={(e) => handleInputChange("description", e.target.value)}
                           placeholder="アプリの機能や特徴を詳しく説明してください..."
                           rows={4}
-                          className={`w-full ${errors.description ? "border-red-500" : ""}`}
+                          className={`w-full bg-white ${errors.description ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description}</p>}
                       </div>
@@ -301,7 +304,7 @@ export default function EditApp() {
                           カテゴリ <span className="text-red-500">*</span>
                         </Label>
                         <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                          <SelectTrigger className={`w-full ${errors.category ? "border-red-500" : ""}`}>
+                          <SelectTrigger className={`w-full bg-white ${errors.category ? "border-red-500" : ""}`}>
                             <SelectValue placeholder="カテゴリを選択" />
                           </SelectTrigger>
                           <SelectContent>
@@ -318,21 +321,29 @@ export default function EditApp() {
                   </Card>
 
                   {/* サムネイル画像 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">サムネイル画像</CardTitle>
                       <CardDescription className="text-left">アプリのサムネイル画像を設定してください</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {/* 現在の画像 */}
-                      {thumbnailPreview && (
-                        <div className="flex justify-center">
-                          <div className="relative">
-                            <img
-                              src={thumbnailPreview}
-                              alt="サムネイル"
-                              className="w-32 h-32 object-cover rounded-lg"
-                            />
+                      <div className="flex justify-center">
+                        <div className="relative w-32 h-32">
+                          <div className="w-full h-full bg-white/90 rounded-lg overflow-hidden">
+                            {thumbnailPreview ? (
+                              <img
+                                src={thumbnailPreview}
+                                alt="サムネイル"
+                                className="w-full h-full object-contain"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <ImageIcon className="w-8 h-8 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                          {thumbnailPreview && (
                             <Button
                               type="button"
                               variant="destructive"
@@ -345,9 +356,9 @@ export default function EditApp() {
                             >
                               <X className="w-4 h-4" />
                             </Button>
-                          </div>
+                          )}
                         </div>
-                      )}
+                      </div>
 
                       {/* 画像アップロード */}
                       <div
@@ -373,7 +384,7 @@ export default function EditApp() {
                           id="thumbnail-upload"
                         />
                         <Label htmlFor="thumbnail-upload">
-                          <Button type="button" variant="outline" size="sm" asChild>
+                          <Button type="button" variant="outline" className="bg-white" size="sm" asChild>
                             <span>
                               <Upload className="w-4 h-4 mr-2" />
                               ファイルを選択
@@ -391,7 +402,7 @@ export default function EditApp() {
                   </Card>
 
                   {/* リンク情報 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">リンク情報</CardTitle>
                       <CardDescription className="text-left">GitHubリポジトリや公開先URLを入力してください（任意）</CardDescription>
@@ -404,10 +415,12 @@ export default function EditApp() {
                         </Label>
                         <Input
                           id="githubUrl"
+                          type="url"
                           value={formData.github_url}
                           onChange={(e) => handleInputChange("github_url", e.target.value)}
                           placeholder="https://github.com/username/repository"
-                          className={`w-full ${errors.github_url ? "border-red-500" : ""}`}
+                          className={`w-full bg-white ${errors.github_url ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.github_url && <p className="text-sm text-red-500 mt-1">{errors.github_url}</p>}
                       </div>
@@ -419,10 +432,12 @@ export default function EditApp() {
                         </Label>
                         <Input
                           id="deployUrl"
+                          type="url"
                           value={formData.deploy_url}
                           onChange={(e) => handleInputChange("deploy_url", e.target.value)}
-                          placeholder="https://your-app.vercel.app"
-                          className={`w-full ${errors.deploy_url ? "border-red-500" : ""}`}
+                          placeholder="https://your-app.com"
+                          className={`w-full bg-white ${errors.deploy_url ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.deploy_url && <p className="text-sm text-red-500 mt-1">{errors.deploy_url}</p>}
                       </div>
@@ -430,7 +445,7 @@ export default function EditApp() {
                   </Card>
 
                   {/* バージョン情報 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">バージョン情報</CardTitle>
                       <CardDescription className="text-left">現在のバージョン情報を表示します</CardDescription>
@@ -467,10 +482,10 @@ export default function EditApp() {
 
               {/* 保存ボタン */}
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                <Button type="button" variant="outline" asChild>
+                <Button type="button" variant="outline" className="bg-white" asChild>
                   <Link to={`/apps/${id}`}>キャンセル</Link>
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="min-w-32">
+                <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white">
                   {isSubmitting ? (
                     <>
                       <Save className="w-4 h-4 mr-2 animate-spin" />
@@ -486,7 +501,7 @@ export default function EditApp() {
               </div>
 
               {/* 注意事項 */}
-              <Alert className="w-full max-w-none">
+              <Alert className="w-full max-w-none bg-white">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   更新されたアプリは他のユーザーに公開され、フィードバックを受け取ることができます。

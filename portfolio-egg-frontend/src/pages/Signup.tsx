@@ -111,29 +111,27 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">新規登録</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            すでにアカウントをお持ちの方は{" "}
-            <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-              ログイン
-            </Link>
-          </p>
+    <div className="min-h-screen bg-orange-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* ロゴ・タイトル */}
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-block">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">🥚 Portfolio Egg</h1>
+          </Link>
+          <p className="text-gray-600">アプリを投稿してフィードバックを受け取ろう</p>
         </div>
 
-        <Card>
+        <Card className="w-full max-w-md bg-white/80">
           <CardHeader>
-            <CardTitle className="text-left">アカウントを作成</CardTitle>
-            <CardDescription className="text-left">
+            <CardTitle className="text-center">アカウントを作成</CardTitle>
+            <CardDescription className="text-center">
               必要な情報を入力してアカウントを作成してください
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {errors.general && (
-                <Alert variant="destructive">
+                <Alert variant="destructive" className="bg-white/80">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{errors.general}</AlertDescription>
                 </Alert>
@@ -150,7 +148,7 @@ export default function Signup() {
                   value={formData.username}
                   onChange={(e) => handleInputChange("username", e.target.value)}
                   placeholder="ユーザー名を入力"
-                  className={errors.username ? "border-red-500" : ""}
+                  className={`bg-white/80 focus:ring-0 focus:border-gray-300 ${errors.username ? "border-red-500" : ""}`}
                   disabled={isSubmitting}
                 />
                 {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username}</p>}
@@ -167,8 +165,8 @@ export default function Signup() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="example@email.com"
-                  className={errors.email ? "border-red-500" : ""}
+                  placeholder="メールアドレスを入力"
+                  className={`bg-white/80 focus:ring-0 focus:border-gray-300 ${errors.email ? "border-red-500" : ""}`}
                   disabled={isSubmitting}
                 />
                 {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
@@ -186,7 +184,7 @@ export default function Signup() {
                     value={formData.password}
                     onChange={(e) => handleInputChange("password", e.target.value)}
                     placeholder="パスワードを入力"
-                    className={errors.password ? "border-red-500" : ""}
+                    className={`bg-white/80 focus:ring-0 focus:border-gray-300 ${errors.password ? "border-red-500" : ""}`}
                     disabled={isSubmitting}
                   />
                   <Button
@@ -220,7 +218,7 @@ export default function Signup() {
                     value={formData.password_confirmation}
                     onChange={(e) => handleInputChange("password_confirmation", e.target.value)}
                     placeholder="パスワードを再入力"
-                    className={errors.password_confirmation ? "border-red-500" : ""}
+                    className={`bg-white/80 focus:ring-0 focus:border-gray-300 ${errors.password_confirmation ? "border-red-500" : ""}`}
                     disabled={isSubmitting}
                   />
                   <Button
@@ -241,7 +239,7 @@ export default function Signup() {
                 {errors.password_confirmation && <p className="text-sm text-red-500 mt-1">{errors.password_confirmation}</p>}
               </div>
 
-              <Button type="submit" disabled={isSubmitting} className="w-full">
+              <Button type="submit" disabled={isSubmitting} className="w-full bg-stone-600 hover:bg-stone-700 text-white">
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
@@ -259,7 +257,7 @@ export default function Signup() {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">または</span>
+                  <span className="px-2 bg-white/80 text-gray-500">または</span>
                 </div>
               </div>
 

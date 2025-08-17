@@ -53,21 +53,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
-      credentials: 'include', // 追加
+      credentials: 'include',
     });
 
-    // ここで全ヘッダーを出力
-    for (let [key, value] of response.headers.entries()) {
-      console.log(key, value);
-    }
-
     if (!response.ok) {
-      // ...エラー処理
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.errors?.full_messages?.[0] || 'ログインに失敗しました');
     }
 
     const data = await response.json();
 
-    // ここで全て保存
+    // トークンを保存
     const accessToken = response.headers.get('access-token');
     const client = response.headers.get('client');
     const uid = response.headers.get('uid');
@@ -76,9 +72,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (client) localStorage.setItem('client', client);
     if (uid) localStorage.setItem('uid', uid);
 
-    setUser(data.data); // ここはAPIのレスポンス構造に合わせて
-    setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(data.data));
+    // プロフィール画像を含む完全なユーザー情報を取得
+    try {
+      const profileResponse = await fetch('http://localhost:3000/api/v1/profile', {
+        headers: {
+          'Content-Type': 'application/json',
+          'access-token': accessToken || '',
+          'client': client || '',
+          'uid': uid || '',
+        },
+        credentials: 'include',
+      });
+
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json();
+        setUser(profileData);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(profileData));
+      } else {
+        // プロフィール取得に失敗した場合は基本情報のみ使用
+        setUser(data.data);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(data.data));
+      }
+    } catch (error) {
+      console.error('Profile fetch error:', error);
+      // プロフィール取得に失敗した場合は基本情報のみ使用
+      setUser(data.data);
+      setIsAuthenticated(true);
+      localStorage.setItem('user', JSON.stringify(data.data));
+    }
   };
 
   const signup = async (email: string, password: string, passwordConfirmation: string, username: string) => {

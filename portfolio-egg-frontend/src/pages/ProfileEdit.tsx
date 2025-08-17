@@ -242,9 +242,9 @@ export default function ProfileEdit() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* ナビゲーションバー */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -258,249 +258,258 @@ export default function ProfileEdit() {
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* メインフォーム */}
-            <div className="space-y-6">
-              {/* 基本情報 */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-left">基本情報</CardTitle>
-                  <CardDescription className="text-left">プロフィールの基本情報を編集してください</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="username" className="text-left">
-                      ユーザー名 <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="username"
-                      value={formData.username}
-                      onChange={(e) => handleInputChange("username", e.target.value)}
-                      placeholder="ユーザー名を入力"
-                      className={errors.username ? "border-red-500" : ""}
-                    />
-                    {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username}</p>}
-                    <p className="text-sm text-gray-500 mt-1">2-20文字で入力してください</p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="bio" className="text-left">
-                      自己紹介
-                    </Label>
-                    <Textarea
-                      id="bio"
-                      value={formData.bio}
-                      onChange={(e) => handleInputChange("bio", e.target.value)}
-                      placeholder="自己紹介を入力してください..."
-                      rows={4}
-                      className={errors.bio ? "border-red-500" : ""}
-                    />
-                    {errors.bio && <p className="text-sm text-red-500 mt-1">{errors.bio}</p>}
-                    <p className="text-sm text-gray-500 mt-1">500文字以内で入力してください</p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="githubUrl" className="text-left">
-                      <Github className="w-4 h-4 inline mr-2" />
-                      GitHub URL
-                    </Label>
-                    <Input
-                      id="githubUrl"
-                      value={formData.github_url}
-                      onChange={(e) => handleInputChange("github_url", e.target.value)}
-                      placeholder="https://github.com/username"
-                      className={errors.github_url ? "border-red-500" : ""}
-                    />
-                    {errors.github_url && <p className="text-sm text-red-500 mt-1">{errors.github_url}</p>}
-                    <p className="text-sm text-gray-500 mt-1">GitHubプロフィールのURLを入力してください（任意）</p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="twitterUrl" className="text-left">
-                      <Twitter className="w-4 h-4 inline mr-2" />
-                      X URL
-                    </Label>
-                    <Input
-                      id="twitterUrl"
-                      value={formData.twitter_url}
-                      onChange={(e) => handleInputChange("twitter_url", e.target.value)}
-                      placeholder="https://x.com/username"
-                      className={errors.twitter_url ? "border-red-500" : ""}
-                    />
-                    {(errors as any).twitter_url && <p className="text-sm text-red-500 mt-1">{(errors as any).twitter_url}</p>}
-                    <p className="text-sm text-gray-500 mt-1">XプロフィールのURLを入力してください（任意）</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* プロフィール画像 */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-left">プロフィール画像</CardTitle>
-                  <CardDescription className="text-left">プロフィール画像を設定してください</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* 現在の画像 */}
-                  {profileImagePreview && (
-                    <div className="flex justify-center">
-                      <div className="relative">
-                        <Avatar className="w-24 h-24">
-                          <AvatarImage src={profileImagePreview} alt="プロフィール画像" />
-                          <AvatarFallback>{formData.username?.[0] || "?"}</AvatarFallback>
-                        </Avatar>
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0"
-                          onClick={() => {
-                            setProfileImagePreview(null);
-                            setFormData((prev) => ({ ...prev, profile_image: undefined }));
-                          }}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* メインコンテンツ */}
+          <div className="lg:col-span-2 space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* メインフォーム */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* 基本情報 */}
+                  <Card className="w-full max-w-none bg-white">
+                    <CardHeader>
+                      <CardTitle className="text-left">基本情報</CardTitle>
+                      <CardDescription className="text-left">プロフィールの基本情報を編集してください</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <Label htmlFor="username" className="text-left">
+                          ユーザー名 <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="username"
+                          value={formData.username}
+                          onChange={(e) => handleInputChange("username", e.target.value)}
+                          placeholder="ユーザー名を入力"
+                          className={`bg-white focus:ring-0 focus:border-gray-300 ${errors.username ? "border-red-500" : ""}`}
+                        />
+                        {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username}</p>}
+                        <p className="text-sm text-gray-500 mt-1">2-20文字で入力してください</p>
                       </div>
-                    </div>
-                  )}
 
-                  {/* 画像アップロード */}
-                  <div
-                    className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
-                      dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
-                    }`}
-                    onDragEnter={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDragOver={handleDrag}
-                    onDrop={handleDrop}
-                  >
-                    <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-2">画像をドラッグ&ドロップ</p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          handleImageUpload(e.target.files[0]);
-                        }
-                      }}
-                      className="hidden"
-                      id="profile-image-upload"
-                    />
-                    <Label htmlFor="profile-image-upload">
-                      <Button type="button" variant="outline" size="sm" asChild>
-                        <span>
-                          <Upload className="w-4 h-4 mr-2" />
-                          ファイルを選択
-                        </span>
-                      </Button>
-                    </Label>
-                  </div>
+                      <div>
+                        <Label htmlFor="bio" className="text-left">
+                          自己紹介
+                        </Label>
+                        <Textarea
+                          id="bio"
+                          value={formData.bio}
+                          onChange={(e) => handleInputChange("bio", e.target.value)}
+                          placeholder="自己紹介を入力してください..."
+                          rows={4}
+                          className={`bg-white focus:ring-0 focus:border-gray-300 ${errors.bio ? "border-red-500" : ""}`}
+                        />
+                        {errors.bio && <p className="text-sm text-red-500 mt-1">{errors.bio}</p>}
+                        <p className="text-sm text-gray-500 mt-1">500文字以内で入力してください</p>
+                      </div>
 
-                  <p className="text-xs text-gray-500 text-center">
-                    JPG、PNG、GIF形式をサポート
-                    <br />
-                    推奨サイズ: 400x400px
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+                      <div>
+                        <Label htmlFor="githubUrl" className="text-left">
+                          <Github className="w-4 h-4 inline mr-2" />
+                          GitHub URL
+                        </Label>
+                        <Input
+                          id="githubUrl"
+                          value={formData.github_url}
+                          onChange={(e) => handleInputChange("github_url", e.target.value)}
+                          placeholder="https://github.com/username"
+                          className={`bg-white focus:ring-0 focus:border-gray-300 ${errors.github_url ? "border-red-500" : ""}`}
+                        />
+                        {errors.github_url && <p className="text-sm text-red-500 mt-1">{errors.github_url}</p>}
+                        <p className="text-sm text-gray-500 mt-1">GitHubプロフィールのURLを入力してください（任意）</p>
+                      </div>
 
-            {/* サイドバー */}
-            <div className="space-y-6">
-              {/* 現在のプロフィール */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-left">現在のプロフィール</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center space-x-3 mb-4">
-                    <Avatar className="w-16 h-16">
-                      <AvatarImage src={profile.profile_image_url || "/placeholder.svg"} alt={profile.username} />
-                      <AvatarFallback>{profile.username[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold text-left">{profile.username}</h3>
-                      <p className="text-sm text-gray-500 text-left">{profile.email}</p>
-                    </div>
-                  </div>
-                  {profile.bio && (
-                    <p className="text-sm text-gray-700 text-left mb-3">{profile.bio}</p>
-                  )}
-                  {profile.github_url && (
-                    <div className="flex items-center space-x-2 text-sm">
-                      <Github className="w-4 h-4 text-gray-400" />
-                      <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                        GitHub
-                      </a>
-                    </div>
-                  )}
-                  {profile.twitter_url && (
-                    <div className="flex items-center space-x-2 text-sm">
-                      <Twitter className="w-4 h-4 text-blue-400" />
-                      <a href={profile.twitter_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                        X
-                      </a>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                      <div>
+                        <Label htmlFor="twitterUrl" className="text-left">
+                          <Twitter className="w-4 h-4 inline mr-2" />
+                          X URL
+                        </Label>
+                        <Input
+                          id="twitterUrl"
+                          value={formData.twitter_url}
+                          onChange={(e) => handleInputChange("twitter_url", e.target.value)}
+                          placeholder="https://x.com/username"
+                          className={`bg-white focus:ring-0 focus:border-gray-300 ${errors.twitter_url ? "border-red-500" : ""}`}
+                        />
+                        {(errors as any).twitter_url && <p className="text-sm text-red-500 mt-1">{(errors as any).twitter_url}</p>}
+                        <p className="text-sm text-gray-500 mt-1">XプロフィールのURLを入力してください（任意）</p>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-              {/* アカウント情報 */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-left">アカウント情報</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">メールアドレス</span>
-                      <span className="font-medium">{profile.email}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">ユーザーID</span>
-                      <span className="font-medium">{profile.id}</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-3">
-                    メールアドレスとユーザーIDは変更できません
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+                  {/* プロフィール画像 */}
+                  <Card className="w-full max-w-none bg-white">
+                    <CardHeader>
+                      <CardTitle className="text-left">プロフィール画像</CardTitle>
+                      <CardDescription className="text-left">プロフィール画像を設定してください</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* 現在の画像 */}
+                      {profileImagePreview && (
+                        <div className="flex justify-center">
+                          <div className="relative">
+                            <Avatar className="w-24 h-24">
+                              <AvatarImage src={profileImagePreview} alt="プロフィール画像" />
+                              <AvatarFallback>{formData.username?.[0] || "?"}</AvatarFallback>
+                            </Avatar>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0"
+                              onClick={() => {
+                                setProfileImagePreview(null);
+                                setFormData((prev) => ({ ...prev, profile_image: undefined }));
+                              }}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 画像アップロード */}
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
+                          dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
+                        }`}
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={handleDrop}
+                      >
+                        <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600 mb-2">画像をドラッグ&ドロップ</p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              handleImageUpload(e.target.files[0]);
+                            }
+                          }}
+                          className="hidden"
+                          id="profile-image-upload"
+                        />
+                        <Label htmlFor="profile-image-upload">
+                                                      <Button type="button" variant="outline" className="bg-white" size="sm" asChild>
+                            <span>
+                              <Upload className="w-4 h-4 mr-2" />
+                              ファイルを選択
+                            </span>
+                          </Button>
+                        </Label>
+                      </div>
+
+                      <p className="text-xs text-gray-500 text-center">
+                        JPG、PNG、GIF形式をサポート
+                        <br />
+                        推奨サイズ: 400x400px
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                
+              </div>
+
+              {/* 保存ボタン */}
+              <div className="flex justify-end space-x-4 pt-6 border-t">
+                <Button type="button" variant="outline" className="bg-white" asChild>
+                  <Link to="/">キャンセル</Link>
+                </Button>
+                <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white">
+                  {isSubmitting ? (
+                    <>
+                      <Save className="w-4 h-4 mr-2 animate-spin" />
+                      更新中...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      変更を保存
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* 注意事項 */}
+              <Alert className="w-full max-w-none bg-white">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  プロフィール情報は他のユーザーに公開されます。
+                  個人情報や機密情報は含めないでください。
+                </AlertDescription>
+              </Alert>
+            </form>
           </div>
+          
+          {/* サイドバー */}
+          <div className="space-y-6">
+                  {/* 現在のプロフィール */}
+                  <Card className="w-full max-w-none bg-white">
+                    <CardHeader>
+                      <CardTitle className="text-left">現在のプロフィール</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Avatar className="w-16 h-16">
+                          <AvatarImage src={profile.profile_image_url || "/placeholder.svg"} alt={profile.username} />
+                          <AvatarFallback>{profile.username[0]}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h3 className="font-semibold text-left">{profile.username}</h3>
+                          <p className="text-sm text-gray-500 text-left">{profile.email}</p>
+                        </div>
+                      </div>
+                      {profile.bio && (
+                        <p className="text-sm text-gray-700 text-left mb-3">{profile.bio}</p>
+                      )}
+                      <div className="flex justify-start items-center gap-6 mb-4">
+                        {profile.github_url && (
+                          <div className="flex items-center space-x-2 text-sm">
+                            <Github className="w-4 h-4 text-gray-400" />
+                            <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                              GitHub
+                            </a>
+                          </div>
+                        )}
+                        {profile.twitter_url && (
+                          <div className="flex items-center space-x-2 text-sm">
+                            <Twitter className="w-4 h-4 text-gray-400" />
+                            <a href={profile.twitter_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                              X
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
 
-          {/* 保存ボタン */}
-          <div className="flex justify-end space-x-4 pt-6 border-t">
-            <Button type="button" variant="outline" asChild>
-              <Link to="/">キャンセル</Link>
-            </Button>
-            <Button type="submit" disabled={isSubmitting} className="min-w-32">
-              {isSubmitting ? (
-                <>
-                  <Save className="w-4 h-4 mr-2 animate-spin" />
-                  更新中...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  変更を保存
-                </>
-              )}
-            </Button>
-          </div>
-
-          {/* 注意事項 */}
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              プロフィール情報は他のユーザーに公開されます。
-              個人情報や機密情報は含めないでください。
-            </AlertDescription>
-          </Alert>
-        </form>
+                  {/* アカウント情報 */}
+                  <Card className="w-full max-w-none bg-white">
+                    <CardHeader>
+                      <CardTitle className="text-left">アカウント情報</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">メールアドレス</span>
+                          <span className="font-medium">{profile.email}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">ユーザーID</span>
+                          <span className="font-medium">{profile.id}</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-3">
+                        メールアドレスとユーザーIDは変更できません
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+        </div>
       </div>
     </div>
   );

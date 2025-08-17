@@ -318,9 +318,9 @@ export default function NewVersion() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* ナビゲーションバー */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -343,7 +343,7 @@ export default function NewVersion() {
                 {/* メインフォーム */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* アプリ情報編集 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">アプリ情報の編集</CardTitle>
                       <CardDescription className="text-left">アプリの基本情報を編集できます</CardDescription>
@@ -355,10 +355,12 @@ export default function NewVersion() {
                         </Label>
                         <Input
                           id="title"
+                          type="text"
                           value={appForm.title}
                           onChange={(e) => handleAppInputChange("title", e.target.value)}
                           placeholder="例: タスク管理アプリ"
-                          className={`w-full ${errors.title ? "border-red-500" : ""}`}
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.title ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.title && <p className="text-sm text-red-500 mt-1">{errors.title}</p>}
                       </div>
@@ -373,7 +375,8 @@ export default function NewVersion() {
                           onChange={(e) => handleAppInputChange("description", e.target.value)}
                           placeholder="アプリの機能や特徴を詳しく説明してください..."
                           rows={4}
-                          className={`w-full ${errors.description ? "border-red-500" : ""}`}
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.description ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description}</p>}
                       </div>
@@ -383,10 +386,10 @@ export default function NewVersion() {
                           カテゴリ <span className="text-red-500">*</span>
                         </Label>
                         <Select value={appForm.category} onValueChange={(value) => handleAppInputChange("category", value)}>
-                          <SelectTrigger className={`w-full ${errors.category ? "border-red-500" : ""}`}>
+                          <SelectTrigger className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.category ? "border-red-500" : ""}`}>
                             <SelectValue placeholder="カテゴリを選択" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-white/90">
                             {categories.map((category) => (
                               <SelectItem key={category} value={category}>
                                 {category}
@@ -404,10 +407,12 @@ export default function NewVersion() {
                         </Label>
                         <Input
                           id="githubUrl"
+                          type="url"
                           value={appForm.github_url}
                           onChange={(e) => handleAppInputChange("github_url", e.target.value)}
                           placeholder="https://github.com/username/repository"
-                          className={`w-full ${errors.github_url ? "border-red-500" : ""}`}
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.github_url ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.github_url && <p className="text-sm text-red-500 mt-1">{errors.github_url}</p>}
                       </div>
@@ -419,10 +424,12 @@ export default function NewVersion() {
                         </Label>
                         <Input
                           id="deployUrl"
+                          type="url"
                           value={appForm.deploy_url}
                           onChange={(e) => handleAppInputChange("deploy_url", e.target.value)}
-                          placeholder="https://your-app.vercel.app"
-                          className={`w-full ${errors.deploy_url ? "border-red-500" : ""}`}
+                          placeholder="https://your-app.com"
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.deploy_url ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.deploy_url && <p className="text-sm text-red-500 mt-1">{errors.deploy_url}</p>}
                       </div>
@@ -430,14 +437,22 @@ export default function NewVersion() {
                       {/* サムネイル画像 */}
                       <div>
                         <Label className="text-left">サムネイル画像</Label>
-                        {thumbnailPreview && (
-                          <div className="flex justify-center mb-4">
-                            <div className="relative">
-                              <img
-                                src={thumbnailPreview}
-                                alt="サムネイル"
-                                className="w-32 h-32 object-cover rounded-lg"
-                              />
+                        <div className="flex justify-center mb-4">
+                          <div className="relative w-32 h-32">
+                            <div className="w-full h-full bg-white/90 rounded-lg overflow-hidden">
+                              {thumbnailPreview ? (
+                                <img
+                                  src={thumbnailPreview}
+                                  alt="サムネイル"
+                                  className="w-full h-full object-contain"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <ImageIcon className="w-8 h-8 text-gray-400" />
+                                </div>
+                              )}
+                            </div>
+                            {thumbnailPreview && (
                               <Button
                                 type="button"
                                 variant="destructive"
@@ -450,9 +465,9 @@ export default function NewVersion() {
                               >
                                 <X className="w-4 h-4" />
                               </Button>
-                            </div>
+                            )}
                           </div>
-                        )}
+                        </div>
 
                         <div
                           className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
@@ -477,12 +492,12 @@ export default function NewVersion() {
                             id="thumbnail-upload"
                           />
                           <Label htmlFor="thumbnail-upload">
-                            <Button type="button" variant="outline" size="sm" asChild>
-                              <span>
-                                <Upload className="w-4 h-4 mr-2" />
-                                ファイルを選択
-                              </span>
-                            </Button>
+                                                    <Button type="button" variant="outline" className="bg-white" size="sm" asChild>
+                          <span>
+                            <Upload className="w-4 h-4 mr-2" />
+                            ファイルを選択
+                          </span>
+                        </Button>
                           </Label>
                         </div>
                       </div>
@@ -490,7 +505,7 @@ export default function NewVersion() {
                   </Card>
 
                   {/* バージョン情報 */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">バージョン情報</CardTitle>
                       <CardDescription className="text-left">新しいバージョンの情報を入力してください</CardDescription>
@@ -502,10 +517,12 @@ export default function NewVersion() {
                         </Label>
                         <Input
                           id="versionNumber"
+                          type="text"
                           value={versionForm.version_number}
                           onChange={(e) => handleVersionInputChange("version_number", e.target.value)}
-                          placeholder="例: 1.0.0"
-                          className={`w-full ${errors.version_number ? "border-red-500" : ""}`}
+                          placeholder="例: v1.0.0"
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.version_number ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.version_number && <p className="text-sm text-red-500 mt-1">{errors.version_number}</p>}
                         <p className="text-sm text-gray-500 mt-1">セマンティックバージョニング（x.y.z）の形式で入力してください</p>
@@ -519,9 +536,10 @@ export default function NewVersion() {
                           id="changelog"
                           value={versionForm.changelog}
                           onChange={(e) => handleVersionInputChange("changelog", e.target.value)}
-                          placeholder="このバージョンでの変更内容を詳しく記述してください..."
+                          placeholder="このバージョンの変更点を入力してください..."
                           rows={6}
-                          className={`w-full ${errors.changelog ? "border-red-500" : ""}`}
+                          className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.changelog ? "border-red-500" : ""}`}
+                          disabled={isSubmitting}
                         />
                         {errors.changelog && <p className="text-sm text-red-500 mt-1">{errors.changelog}</p>}
                       </div>
@@ -532,10 +550,10 @@ export default function NewVersion() {
 
               {/* 保存ボタン */}
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                <Button type="button" variant="outline" asChild>
+                <Button type="button" variant="outline" className="bg-white" asChild>
                   <Link to={`/apps/${id}`}>キャンセル</Link>
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="min-w-32">
+                <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white">
                   {isSubmitting ? (
                     <>
                       <Save className="w-4 h-4 mr-2 animate-spin" />
@@ -551,7 +569,7 @@ export default function NewVersion() {
               </div>
 
               {/* 注意事項 */}
-              <Alert className="w-full max-w-none">
+              <Alert className="w-full max-w-none bg-white">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   新しいバージョンを追加すると、ユーザーはそのバージョンに対してフィードバックを投稿できるようになります。
@@ -561,10 +579,11 @@ export default function NewVersion() {
               </Alert>
             </form>
           </div>
+          
           {/* サイドバー */}
           <div className="space-y-6">
-                  {/* 現在のバージョン履歴 */}
-                  <Card className="w-full max-w-none">
+            {/* 現在のバージョン履歴 */}
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">現在のバージョン履歴</CardTitle>
                       <CardDescription className="text-left">既存のバージョン一覧</CardDescription>
@@ -596,7 +615,7 @@ export default function NewVersion() {
                   </Card>
 
                   {/* バージョニングガイド */}
-                  <Card className="w-full max-w-none">
+                  <Card className="w-full max-w-none bg-white">
                     <CardHeader>
                       <CardTitle className="text-left">バージョニングガイド</CardTitle>
                     </CardHeader>
@@ -620,6 +639,7 @@ export default function NewVersion() {
           </div>
         </div>
       </div>
+      
     </div>
   );
 } 
