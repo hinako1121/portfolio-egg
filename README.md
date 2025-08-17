@@ -204,21 +204,3 @@ npm run lint
 2. データベースの設定
 3. Rails アセットのプリコンパイル
 4. フロントエンドのビルド
-
-詳細なデプロイ手順は各環境に応じて設定してください。
-
-## 🤝 コントリビューション
-
-1. このリポジトリをフォーク
-2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add some amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. プルリクエストを作成
-
-## 📄 ライセンス
-
-このプロジェクトは[MIT License](LICENSE)の下で公開されています。
-
-## 📞 サポート
-
-問題や質問がある場合は、GitHubのIssueを作成してください。 
