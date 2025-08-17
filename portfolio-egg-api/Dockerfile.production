@@ -1,0 +1,41 @@
+FROM ruby:3.2-slim
+
+# 必要なパッケージをインストール
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+    build-essential \
+    gnupg2 \
+    less \
+    git \
+    libpq-dev \
+    postgresql-client \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# アプリケーションディレクトリを作成
+WORKDIR /app
+
+# Gemfileをコピーして依存関係をインストール
+COPY Gemfile Gemfile.lock ./
+RUN bundle config --global frozen 1 \
+    && bundle install --without development test
+
+# アプリケーションコードをコピー
+COPY . .
+
+# 本番環境の設定
+ENV RAILS_ENV=production
+ENV RAILS_LOG_TO_STDOUT=true
+ENV RAILS_SERVE_STATIC_FILES=true
+
+# マスターキーの設定（Secret Managerから取得）
+ARG RAILS_MASTER_KEY
+ENV RAILS_MASTER_KEY=$RAILS_MASTER_KEY
+
+# アセットのプリコンパイル
+RUN bundle exec rails assets:precompile
+
+# ポート設定
+EXPOSE 8080
+
+# サーバー起動
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "8080"] 
