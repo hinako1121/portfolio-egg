@@ -49,7 +49,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch('http://localhost:3000/api/v1/auth/sign_in', {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/v1/auth/sign_in`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -106,7 +107,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signup = async (email: string, password: string, passwordConfirmation: string, username: string) => {
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const response = await fetch(`${apiUrl}/api/v1/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +158,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/v1/profile', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const response = await fetch(`${apiUrl}/api/v1/profile`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -181,7 +184,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateProfile = async (userData: Partial<User>) => {
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const response = await fetch(`${apiUrl}/api/v1/auth`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
