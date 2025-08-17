@@ -324,14 +324,14 @@ export default function AppDetail() {
             {app.is_owner && (
               <div className="flex items-center space-x-2">
                                   <Button variant="outline" className="bg-white" size="sm" asChild>
-                    <Link to={`/apps/${id}/edit`}>
-                      <Edit className="w-4 h-4 mr-2" />
-                      編集
-                    </Link>
-                  </Button>
+                  <Link to={`/apps/${id}/edit`}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    編集
+                  </Link>
+                </Button>
                   <Button variant="outline" className="bg-white" asChild>
-                    <Link to={`/apps/${id}/versions/new`}>バージョン追加</Link>
-                  </Button>
+                  <Link to={`/apps/${id}/versions/new`}>バージョン追加</Link>
+                </Button>
               </div>
             )}
           </div>
@@ -351,23 +351,17 @@ export default function AppDetail() {
                       <CardTitle className="text-2xl text-left">{app.title}</CardTitle>
                       <Badge variant="secondary">{app.category}</Badge>
                     </div>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
-                      <div className="flex items-center space-x-1">
-                        <MessageCircle className="w-4 h-4" />
-                        <span>{app.feedback_count} フィードバック</span>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="w-full h-64 bg-white/90 rounded-lg mb-6 flex items-center justify-center overflow-hidden">
                   {app.thumbnail_url ? (
-                    <img
+                <img
                       src={app.thumbnail_url}
-                      alt={app.title}
+                  alt={app.title}
                       className="w-full h-full object-contain"
-                    />
+                />
                   ) : (
                     <ImageIcon className="w-24 h-24 text-gray-400" />
                   )}
@@ -426,7 +420,7 @@ export default function AppDetail() {
                     {sortedVersions.map((version, idx) => (
                       <Collapsible key={version.id} open={idx === 0 || versionListOpen}>
                         <CollapsibleTrigger asChild>
-                          <div className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded">
+                          <div className="flex items-center justify-between cursor-pointer p-2 rounded">
                             <div className="flex items-center space-x-4">
                               <span className="font-semibold">v{version.version_number}</span>
                               <span className="text-sm text-gray-500">{formatDate(version.release_date)}</span>
@@ -635,23 +629,23 @@ export default function AppDetail() {
                   </div>
                 )}
                   <div className="flex justify-start items-center gap-6 mb-4">
-                    {app.user.github_url && (
+                  {app.user.github_url && (
                       <div className="flex items-center space-x-2 text-sm">
                         <Github className="w-4 h-4 text-gray-400" />
                         <a href={app.user.github_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                          GitHub
-                        </a>
+                        GitHub
+                      </a>
                       </div>
-                    )}
-                    {app.user.twitter_url && (
+                  )}
+                  {app.user.twitter_url && (
                       <div className="flex items-center space-x-2 text-sm">
                         <Twitter className="w-4 h-4 text-gray-400" />
                         <a href={app.user.twitter_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                          X
-                        </a>
+                        X
+                      </a>
                       </div>
-                    )}
-                  </div>
+                  )}
+                </div>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-sm">
                     <Calendar className="w-4 h-4 text-gray-400" />
@@ -674,17 +668,17 @@ export default function AppDetail() {
                 <div className="space-y-4">
                   {selectedVersionId ? (
                     <>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">総合評価</span>
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">総合評価</span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                           <span className="font-medium">
                             {getSelectedVersionStats().averageScore || "未評価"}
                           </span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">フィードバック数</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">フィードバック数</span>
                         <span className="font-medium">{getSelectedVersionStats().feedbackCount}</span>
                       </div>
                     </>
@@ -699,8 +693,8 @@ export default function AppDetail() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">全体のフィードバック数</span>
-                        <span className="font-medium">{app.feedback_count}</span>
-                      </div>
+                    <span className="font-medium">{app.feedback_count}</span>
+                  </div>
                     </>
                   )}
                   <div className="flex justify-between items-center">

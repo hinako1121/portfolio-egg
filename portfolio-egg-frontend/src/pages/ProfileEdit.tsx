@@ -498,13 +498,9 @@ export default function ProfileEdit() {
                           <span className="text-gray-600">メールアドレス</span>
                           <span className="font-medium">{profile.email}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">ユーザーID</span>
-                          <span className="font-medium">{profile.id}</span>
-                        </div>
                       </div>
                       <p className="text-xs text-gray-500 mt-3">
-                        メールアドレスとユーザーIDは変更できません
+                        メールアドレスは変更できません
                       </p>
                     </CardContent>
                   </Card>

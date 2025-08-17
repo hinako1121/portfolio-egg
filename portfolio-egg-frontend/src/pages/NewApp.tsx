@@ -343,7 +343,7 @@ export default function NewApp() {
                           id="deployUrl"
                           value={formData.deploy_url}
                           onChange={(e) => handleInputChange("deploy_url", e.target.value)}
-                          placeholder="https://your-app.vercel.app"
+                          placeholder="https://your-app"
                           className={`w-full bg-white focus:ring-0 focus:border-gray-300 ${errors.deploy_url ? "border-red-500" : ""}`}
                         />
                         {errors.deploy_url && <p className="text-sm text-red-500 mt-1">{errors.deploy_url}</p>}

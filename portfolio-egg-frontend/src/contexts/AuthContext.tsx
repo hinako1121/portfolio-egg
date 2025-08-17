@@ -99,8 +99,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Profile fetch error:', error);
       // プロフィール取得に失敗した場合は基本情報のみ使用
       setUser(data.data);
-      setIsAuthenticated(true);
-      localStorage.setItem('user', JSON.stringify(data.data));
+    setIsAuthenticated(true);
+    localStorage.setItem('user', JSON.stringify(data.data));
     }
   };
 
