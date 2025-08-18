@@ -5,7 +5,6 @@
 ## 🌐 本番環境
 
 - **フロントエンド**: https://portfolio-egg-frontend-258631948423.asia-northeast1.run.app
-- **API**: https://portfolio-egg-api-258631948423.asia-northeast1.run.app
 
 ## 📋 目次
 

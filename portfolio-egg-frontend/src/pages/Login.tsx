@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Github } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api";
+import { Logo } from "@/components/Logo";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -114,7 +115,10 @@ export default function Login() {
         {/* ロゴ・タイトル */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">🥚 Portfolio Egg</h1>
+            <div className="flex items-center justify-center space-x-3 mb-2">
+              <Logo width={40} height={40} />
+              <h1 className="text-3xl font-bold text-gray-900">Portfolio Egg</h1>
+            </div>
           </Link>
           <p className="text-gray-600">アプリを投稿してフィードバックを受け取ろう</p>
         </div>

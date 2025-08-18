@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // プロフィール画像を含む完全なユーザー情報を取得
     try {
-      const profileResponse = await fetch('http://localhost:3000/api/v1/profile', {
+      const profileResponse = await fetch(`${apiUrl}/api/v1/profile`, {
         headers: {
           'Content-Type': 'application/json',
           'access-token': accessToken || '',
