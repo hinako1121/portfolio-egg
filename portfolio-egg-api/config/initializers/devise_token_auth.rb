@@ -39,6 +39,10 @@ DeviseTokenAuth.setup do |config|
 
   # By default we will use callbacks for single omniauth.
   # It depends on fields like email, provider and uid.
+  config.omniauth_prefix = "/omniauth"
+  
+  # GitHub OAuth設定
+  config.omniauth :github, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET'], scope: 'user:email'
   # config.default_callbacks = true
 
   # Makes it possible to change the headers names

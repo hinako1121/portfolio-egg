@@ -8,13 +8,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Github } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "../contexts/AuthContext";
 import { api } from "@/lib/api";
 import { Logo } from "@/components/Logo";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithGoogle, loginWithGitHub } = useAuth();
+  const { firebaseConfigValid } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
@@ -203,6 +204,32 @@ export default function Login() {
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white/80 text-gray-500">または</span>
                 </div>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={`w-full ${firebaseConfigValid ? 'bg-red-600 hover:bg-red-700 text-white border-red-600' : 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed'}`}
+                  onClick={firebaseConfigValid ? loginWithGoogle : undefined}
+                  disabled={!firebaseConfigValid}
+                  title={!firebaseConfigValid ? "Firebase認証が設定されていません" : ""}
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Googleでログイン {!firebaseConfigValid && "(設定待ち)"}
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={`w-full ${firebaseConfigValid ? 'bg-gray-900 hover:bg-gray-800 text-white border-gray-900' : 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed'}`}
+                  onClick={firebaseConfigValid ? loginWithGitHub : undefined}
+                  disabled={!firebaseConfigValid}
+                  title={!firebaseConfigValid ? "Firebase認証が設定されていません" : ""}
+                >
+                  <Github className="w-4 h-4 mr-2" />
+                  GitHubでログイン {!firebaseConfigValid && "(設定待ち)"}
+                </Button>
               </div>
 
               <div className="mt-6 text-center">

@@ -65,3 +65,9 @@ gem 'pry-rails'
 # 認証用（フェーズ1で使用）
 gem 'devise'
 gem 'devise_token_auth'
+
+
+# OAuth認証用
+gem 'omniauth'
+gem 'omniauth-github'
+gem 'omniauth-rails_csrf_protection'

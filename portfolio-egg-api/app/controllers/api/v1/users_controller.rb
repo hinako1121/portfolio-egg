@@ -11,7 +11,8 @@ module Api
           bio: current_api_v1_user.bio,
           github_url: current_api_v1_user.github_url,
           twitter_url: current_api_v1_user.twitter_url,
-          profile_image_url: current_api_v1_user.profile_image.attached? ? url_for(current_api_v1_user.profile_image) : nil
+          profile_image_url: current_api_v1_user.profile_image.attached? ? 
+            rails_blob_url(current_api_v1_user.profile_image, only_path: false) : nil
         }
       end
 
@@ -24,7 +25,8 @@ module Api
             bio: current_api_v1_user.bio,
             github_url: current_api_v1_user.github_url,
             twitter_url: current_api_v1_user.twitter_url,
-            profile_image_url: current_api_v1_user.profile_image.attached? ? url_for(current_api_v1_user.profile_image) : nil
+            profile_image_url: current_api_v1_user.profile_image.attached? ? 
+              rails_blob_url(current_api_v1_user.profile_image, only_path: false) : nil
           }
         else
           render json: { errors: current_api_v1_user.errors.full_messages }, status: :unprocessable_entity

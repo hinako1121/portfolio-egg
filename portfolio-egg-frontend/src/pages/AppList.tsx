@@ -31,6 +31,12 @@ import { Logo } from "@/components/Logo";
 
 const APPS_PER_PAGE = 20;
 
+// テキスト省略関数
+const truncateText = (text: string, maxLength: number = 150) => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
+
 export default function AppList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -120,8 +126,17 @@ export default function AppList() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Avatar className="cursor-pointer">
-                        <AvatarImage src={user?.profile_image_url || "/placeholder.svg"} alt={user?.username} />
-                        <AvatarFallback>{user?.username?.[0]}</AvatarFallback>
+                        <AvatarImage 
+                          src={user?.profile_image_url || "/placeholder.svg"} 
+                          alt={user?.username || "プロフィール"} 
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/placeholder.svg";
+                          }}
+                        />
+                        <AvatarFallback className="bg-orange-100 text-orange-600">
+                          {user?.username?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || "?"}
+                        </AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -203,9 +218,9 @@ export default function AppList() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {paginatedApps.map((app) => (
                     <Link key={app.id} to={`/apps/${app.id}`}>
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-[28rem] flex flex-col justify-between bg-white">
-                        <CardHeader className="p-0">
-                          <div className="w-full h-48 bg-white/90 rounded-t-lg flex items-center justify-center overflow-hidden">
+                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-[28rem] flex flex-col bg-white overflow-hidden">
+                        <CardHeader className="p-0 flex-shrink-0">
+                          <div className="w-full h-36 sm:h-40 md:h-44 bg-white/90 rounded-t-lg flex items-center justify-center overflow-hidden">
                             {app.thumbnail_url ? (
                               <img
                                 src={app.thumbnail_url}
@@ -213,67 +228,67 @@ export default function AppList() {
                                 className="w-full h-full object-contain"
                               />
                             ) : (
-                              <ImageIcon className="w-16 h-16 text-gray-400" />
+                              <ImageIcon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-gray-400" />
                             )}
                           </div>
                         </CardHeader>
-                        <CardContent className="p-4 flex-1 flex flex-col">
-                          <div className="flex items-start justify-between mb-2">
-                            <CardTitle className="text-lg text-left">{app.title}</CardTitle>
-                            <Badge variant="secondary">{app.category}</Badge>
+                        <CardContent className="p-2 sm:p-3 md:p-4 flex-1 flex flex-col">
+                          <div className="flex items-start justify-between mb-1 flex-shrink-0">
+                            <CardTitle className="text-sm sm:text-base md:text-lg text-left line-clamp-1 sm:line-clamp-2 flex-1 mr-2">{app.title}</CardTitle>
+                            <Badge variant="secondary" className="text-xs flex-shrink-0">{app.category}</Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground line-clamp-3">
-                            {app.description}
-                          </p>
-                          <div className="flex items-center space-x-2 mt-3">
-                            <Avatar className="w-6 h-6">
+                          <div className="text-xs sm:text-sm text-muted-foreground mb-2 overflow-hidden h-10 sm:h-12 md:h-12">
+                            <div className="line-clamp-3">
+                              {app.description}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2 mb-1 flex-shrink-0">
+                            <Avatar className="w-4 h-4 sm:w-5 sm:h-5">
                               <AvatarImage src={app.user.profile_image_url || "/placeholder.svg"} alt={app.user.username} />
-                              <AvatarFallback>{app.user.username[0]}</AvatarFallback>
+                              <AvatarFallback className="text-xs">{app.user.username[0]}</AvatarFallback>
                             </Avatar>
-                            <span className="text-sm text-gray-600">{app.user.username}</span>
-                            <span className="text-xs text-gray-400">v{app.version}</span>
+                            <span className="text-xs sm:text-sm text-gray-600 truncate">{app.user.username}</span>
+                            <span className="text-xs text-gray-400 flex-shrink-0">v{app.version}</span>
                           </div>
-                          <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center justify-between mb-2 flex-shrink-0">
                             <div className="flex items-center space-x-1">
-                              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                              <span className="text-sm font-medium">{app.overall_score}</span>
+                              <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs sm:text-sm font-medium">{app.overall_score}</span>
                             </div>
                             <div className="flex items-center space-x-1 text-gray-500">
-                              <MessageCircle className="w-4 h-4" />
-                              <span className="text-sm">{app.feedback_count}</span>
+                              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="text-xs sm:text-sm">{app.feedback_count}</span>
                             </div>
                           </div>
-                          <div className="flex gap-2 mt-auto pt-4">
-                            {app.github_url ? (
+                          <div className="flex flex-col gap-1 flex-shrink-0 mt-auto">
+                            {app.github_url && (
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="flex-1 min-w-0 bg-white"
+                                className="w-full bg-white text-xs h-7 sm:h-8"
                                 onClick={e => {
                                   e.preventDefault();
                                   e.stopPropagation();
                                   window.open(app.github_url, "_blank");
                                 }}
                               >
-                                <Github className="w-4 h-4 mr-2" />GitHub
+                                <Github className="w-3 h-3 mr-1" />
+                                <span className="truncate text-xs">GitHub</span>
                               </Button>
-                            ) : (
-                              <div className="flex-1 min-w-0" />
                             )}
-                            {app.deploy_url ? (
+                            {app.deploy_url && (
                               <Button
                                 size="sm"
-                                className="flex-1 min-w-0 bg-stone-600 hover:bg-stone-700 text-white"
+                                className="w-full bg-stone-600 hover:bg-stone-700 text-white text-xs h-7 sm:h-8"
                                 onClick={e => {
                                   e.preventDefault();
                                   e.stopPropagation();
                                   window.open(app.deploy_url, "_blank");
                                 }}
                               >
-                                <ExternalLink className="w-4 h-4 mr-2" />開く
+                                <ExternalLink className="w-3 h-3 mr-1" />
+                                <span className="truncate text-xs">開く</span>
                               </Button>
-                            ) : (
-                              <div className="flex-1 min-w-0" />
                             )}
                           </div>
                         </CardContent>
@@ -319,8 +334,17 @@ export default function AppList() {
                   <CardContent>
                     <div className="flex items-start space-x-4">
                       <Avatar className="w-20 h-20">
-                        <AvatarImage src={user?.profile_image_url || "/placeholder.svg"} alt={user?.username} />
-                        <AvatarFallback>{user?.username?.[0]}</AvatarFallback>
+                        <AvatarImage 
+                          src={user?.profile_image_url || "/placeholder.svg"} 
+                          alt={user?.username || "プロフィール"} 
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/placeholder.svg";
+                          }}
+                        />
+                        <AvatarFallback className="bg-orange-100 text-orange-600 text-2xl">
+                          {user?.username?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || "?"}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-left">{user?.username}</h3>
@@ -374,23 +398,23 @@ export default function AppList() {
                     ) : myApps.length > 0 ? (
                       <div className="space-y-4">
                         {myApps.map((app) => (
-                          <div key={app.id} className="flex items-center space-x-4 p-4 border rounded-lg">
-                            <Link to={`/apps/${app.id}`} className="flex-1">
-                              <div className="flex items-center space-x-4">
-                                                            <div className="w-16 h-16 bg-white/90 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
-                              {app.thumbnail_url ? (
-                                <img
-                                  src={app.thumbnail_url}
-                                  alt={app.title}
-                                  className="w-full h-full object-contain"
-                                />
-                              ) : (
-                                <ImageIcon className="w-8 h-8 text-gray-400" />
-                              )}
-                            </div>
-                                <div className="flex-1">
+                          <div key={app.id} className="p-4 border rounded-lg">
+                            <Link to={`/apps/${app.id}`} className="block">
+                              <div className="flex items-start space-x-4 mb-3">
+                                <div className="w-16 h-16 bg-white/90 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                                  {app.thumbnail_url ? (
+                                    <img
+                                      src={app.thumbnail_url}
+                                      alt={app.title}
+                                      className="w-full h-full object-contain"
+                                    />
+                                  ) : (
+                                    <ImageIcon className="w-8 h-8 text-gray-400" />
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
                                   <h4 className="font-semibold text-left">{app.title}</h4>
-                                  <p className="text-sm text-gray-600 mb-1 text-left">{app.description}</p>
+                                  <p className="text-sm text-gray-600 mb-2 text-left">{truncateText(app.description, 120)}</p>
                                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                                     <div className="flex items-center space-x-1">
                                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -398,21 +422,22 @@ export default function AppList() {
                                     </div>
                                     <div className="flex items-center space-x-1">
                                       <MessageCircle className="w-4 h-4" />
-                                      <span>{app.feedback_count} フィードバック</span>
+                                      <span className="hidden sm:inline">フィードバック </span>
+                                      <span>{app.feedback_count}</span>
                                     </div>
                                     <span>v{app.version}</span>
                                   </div>
                                 </div>
                               </div>
                             </Link>
-                            <div className="flex space-x-2">
-                                                    <Button size="sm" variant="outline" className="bg-white" asChild>
-                        <Link to={`/apps/${app.id}/edit`}>編集</Link>
-                      </Button>
-                      <Button size="sm" variant="outline" className="bg-white" asChild>
-                        <Link to={`/apps/${app.id}/versions/new`}>バージョン追加</Link>
-                      </Button>
-                              <Button size="sm" variant="destructive" onClick={async (e) => {
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                              <Button size="sm" variant="outline" className="bg-white w-full sm:w-auto" asChild>
+                                <Link to={`/apps/${app.id}/edit`}>編集</Link>
+                              </Button>
+                              <Button size="sm" variant="outline" className="bg-white w-full sm:w-auto" asChild>
+                                <Link to={`/apps/${app.id}/versions/new`}>バージョン追加</Link>
+                              </Button>
+                              <Button size="sm" variant="destructive" className="w-full sm:w-auto" onClick={async (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 if (window.confirm('本当にこのアプリを削除しますか？')) {

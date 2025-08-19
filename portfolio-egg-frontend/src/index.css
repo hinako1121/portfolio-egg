@@ -6,6 +6,50 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  .line-clamp-2 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  line-height: 1.4;
+  max-height: calc(1.4em * 2);
+}
+
+.line-clamp-3 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  line-height: 1.4;
+  max-height: calc(1.4em * 3);
+}
+
+.line-clamp-4 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 4 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  line-height: 1.4;
+  max-height: calc(1.4em * 4);
+}
+
+.line-clamp-5 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 5 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  line-height: 1.4;
+  max-height: calc(1.4em * 5);
+}
 }
 
 @layer base {
