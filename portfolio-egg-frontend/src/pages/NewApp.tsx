@@ -148,7 +148,7 @@ export default function NewApp() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">ログインが必要です</p>
+                          <p className="text-sm text-gray-600">ログインが必要です</p>
           <Link to="/login" className="text-blue-600 hover:underline">
             ログインページへ
           </Link>
@@ -164,11 +164,11 @@ export default function NewApp() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Link to="/" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link to="/" className="flex items-center text-gray-600 hover:text-gray-900 text-sm sm:text-base">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 戻る
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">新しいアプリを投稿</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-900">新しいアプリを投稿</h1>
             </div>
           </div>
         </div>
@@ -185,12 +185,12 @@ export default function NewApp() {
                   {/* 基本情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">基本情報</CardTitle>
-                      <CardDescription className="text-left">アプリの基本的な情報を入力してください</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">基本情報</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">アプリの基本的な情報を入力してください</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <Label htmlFor="title" className="text-left">
+                        <Label htmlFor="title" className="text-left text-sm sm:text-base">
                           アプリタイトル <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -204,7 +204,7 @@ export default function NewApp() {
                       </div>
 
                       <div>
-                        <Label htmlFor="description" className="text-left">
+                        <Label htmlFor="description" className="text-left text-sm sm:text-base">
                           説明文 <span className="text-red-500">*</span>
                         </Label>
                         <Textarea
@@ -219,7 +219,7 @@ export default function NewApp() {
                       </div>
 
                       <div>
-                        <Label htmlFor="category" className="text-left">
+                        <Label htmlFor="category" className="text-left text-sm sm:text-base">
                           カテゴリ <span className="text-red-500">*</span>
                         </Label>
                         <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
@@ -242,8 +242,8 @@ export default function NewApp() {
                   {/* サムネイル画像 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">サムネイル画像</CardTitle>
-                      <CardDescription className="text-left">アプリのサムネイル画像を設定してください</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">サムネイル画像</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">アプリのサムネイル画像を設定してください</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {/* 現在の画像 */}
@@ -282,7 +282,7 @@ export default function NewApp() {
                         onDrop={handleDrop}
                       >
                         <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600 mb-2">画像をドラッグ&ドロップ</p>
+                        <p className="text-xs sm:text-sm text-gray-600 mb-2">画像をドラッグ&ドロップ</p>
                         <input
                           type="file"
                           accept="image/*"
@@ -295,7 +295,7 @@ export default function NewApp() {
                           id="thumbnail-upload"
                         />
                         <Label htmlFor="thumbnail-upload">
-                                                      <Button type="button" variant="outline" className="bg-white" size="sm" asChild>
+                                                      <Button type="button" variant="outline" className="bg-white text-xs sm:text-sm" size="sm" asChild>
                             <span>
                               <Upload className="w-4 h-4 mr-2" />
                               ファイルを選択
@@ -315,12 +315,12 @@ export default function NewApp() {
                   {/* リンク情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">リンク情報</CardTitle>
-                      <CardDescription className="text-left">GitHubリポジトリや公開先URLを入力してください（任意）</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">リンク情報</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">GitHubリポジトリや公開先URLを入力してください（任意）</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <Label htmlFor="githubUrl" className="text-left">
+                        <Label htmlFor="githubUrl" className="text-left text-sm sm:text-base">
                           <Github className="w-4 h-4 inline mr-2" />
                           GitHubリポジトリURL
                         </Label>
@@ -335,7 +335,7 @@ export default function NewApp() {
                       </div>
 
                       <div>
-                        <Label htmlFor="deployUrl" className="text-left">
+                        <Label htmlFor="deployUrl" className="text-left text-sm sm:text-base">
                           <ExternalLink className="w-4 h-4 inline mr-2" />
                           公開先URL
                         </Label>
@@ -354,12 +354,12 @@ export default function NewApp() {
                   {/* バージョン情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">バージョン情報</CardTitle>
-                      <CardDescription className="text-left">初回リリースのバージョン番号</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">バージョン情報</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">初回リリースのバージョン番号</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div>
-                        <Label htmlFor="versionNumber" className="text-left">バージョン番号</Label>
+                        <Label htmlFor="versionNumber" className="text-left text-sm sm:text-base">バージョン番号</Label>
                         <Input
                           id="versionNumber"
                           value="1.0.0"
@@ -375,10 +375,10 @@ export default function NewApp() {
 
               {/* 投稿ボタン */}
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                                  <Button type="button" variant="outline" className="bg-white" asChild>
+                                  <Button type="button" variant="outline" className="bg-white text-xs sm:text-sm" asChild>
                     <Link to="/">キャンセル</Link>
                   </Button>
-                  <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white">
+                  <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                   {isSubmitting ? (
                     <>
                       <Save className="w-4 h-4 mr-2 animate-spin" />

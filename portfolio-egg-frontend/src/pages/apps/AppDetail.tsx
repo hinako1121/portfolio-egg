@@ -285,7 +285,7 @@ export default function AppDetail() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">読み込み中...</p>
+                          <p className="text-sm text-gray-600">読み込み中...</p>
         </div>
       </div>
     );
@@ -295,7 +295,7 @@ export default function AppDetail() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">アプリが見つかりません</p>
+                          <p className="text-sm text-gray-600">アプリが見つかりません</p>
           <Link to="/" className="text-blue-600 hover:underline">
             ホームに戻る
           </Link>
@@ -315,21 +315,21 @@ export default function AppDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Link to="/" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link to="/" className="flex items-center text-gray-600 hover:text-gray-900 text-sm sm:text-base">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 戻る
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">アプリ詳細</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-900">アプリ詳細</h1>
             </div>
             {app.is_owner && (
               <div className="flex items-center space-x-2">
-                                  <Button variant="outline" className="bg-white" size="sm" asChild>
+                                  <Button variant="outline" className="bg-white text-xs sm:text-sm" size="sm" asChild>
                   <Link to={`/apps/${id}/edit`}>
                     <Edit className="w-4 h-4 mr-2" />
                     編集
                   </Link>
                 </Button>
-                  <Button variant="outline" className="bg-white" asChild>
+                  <Button variant="outline" className="bg-white text-xs sm:text-sm" asChild>
                   <Link to={`/apps/${id}/versions/new`}>バージョン追加</Link>
                 </Button>
               </div>
@@ -370,7 +370,7 @@ export default function AppDetail() {
                 {/* アクションボタン */}
                 <div className="flex space-x-4 mb-6">
                   {app.deploy_url && (
-                    <Button asChild className="flex-1 bg-stone-600 hover:bg-stone-700 text-white">
+                    <Button asChild className="flex-1 bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                       <a href={app.deploy_url} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="w-4 h-4 mr-2" />
                         アプリを開く
@@ -378,7 +378,7 @@ export default function AppDetail() {
                     </Button>
                   )}
                   {app.github_url && (
-                    <Button variant="outline" asChild className="flex-1 bg-white">
+                    <Button variant="outline" asChild className="flex-1 bg-white text-xs sm:text-sm">
                       <a href={app.github_url} target="_blank" rel="noopener noreferrer">
                         <Github className="w-4 h-4 mr-2" />
                         GitHub
@@ -389,7 +389,7 @@ export default function AppDetail() {
 
                 {/* 説明文 */}
                 <div className="text-left">
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{app.description}</pre>
+                  <pre className="whitespace-pre-wrap font-sans text-xs sm:text-sm leading-relaxed">{app.description}</pre>
                 </div>
               </CardContent>
             </Card>
@@ -399,9 +399,9 @@ export default function AppDetail() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-left">バージョン履歴</CardTitle>
+                                          <CardTitle className="text-left text-sm sm:text-base">バージョン履歴</CardTitle>
                   </div>
-                  <Button variant="ghost" className="bg-white" size="sm" onClick={() => setVersionListOpen((prev) => !prev)}>
+                  <Button variant="ghost" className="bg-white text-xs sm:text-sm" size="sm" onClick={() => setVersionListOpen((prev) => !prev)}>
                     {versionListOpen ? (
                       <>
                         <ChevronUp className="w-4 h-4 mr-1" />すべて閉じる
@@ -430,7 +430,7 @@ export default function AppDetail() {
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <div className="pl-8 pb-4">
-                            <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 p-3 text-left">{version.changelog}</pre>
+                            <pre className="whitespace-pre-wrap font-sans text-xs sm:text-sm text-gray-700 p-3 text-left">{version.changelog}</pre>
                           </div>
                         </CollapsibleContent>
                       </Collapsible>
@@ -443,7 +443,7 @@ export default function AppDetail() {
             {/* フィードバック絞り込み */}
             <Card className="bg-white">
               <CardHeader>
-                <CardTitle className="text-left">フィードバック</CardTitle>
+                                      <CardTitle className="text-left text-sm sm:text-base">フィードバック</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="mb-4">
@@ -490,7 +490,7 @@ export default function AppDetail() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500 text-center py-4">まだフィードバックがありません</p>
+                    <p className="text-sm text-gray-500 text-center py-4">まだフィードバックがありません</p>
                   )}
                 </div>
               </CardContent>
@@ -500,10 +500,10 @@ export default function AppDetail() {
             {isAuthenticated && (
               <Card className="bg-white">
                 <CardHeader>
-                  <CardTitle className="text-left">
+                  <CardTitle className="text-left text-sm sm:text-base">
                     {hasExistingFeedback ? "フィードバックを更新" : "フィードバックを投稿"}
                   </CardTitle>
-                  <CardDescription className="text-left">
+                  <CardDescription className="text-left text-xs sm:text-sm">
                     {hasExistingFeedback 
                       ? "既存のフィードバックを編集できます"
                       : "このアプリについての感想や改善点を教えてください"
@@ -513,7 +513,7 @@ export default function AppDetail() {
                 <CardContent>
                   <form onSubmit={handleFeedbackSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-left mb-2">コメント</label>
+                      <label className="block text-xs sm:text-sm font-medium text-left mb-2">コメント</label>
                       <Textarea
                         value={feedbackForm.comment}
                         onChange={e => setFeedbackForm(prev => ({ ...prev, comment: e.target.value }))}
@@ -526,7 +526,7 @@ export default function AppDetail() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-left mb-2">デザイン</label>
+                        <label className="block text-xs sm:text-sm font-medium text-left mb-2">デザイン</label>
                         <StarRating
                           rating={feedbackForm.design_score}
                           onRatingChange={rating => {
@@ -536,21 +536,21 @@ export default function AppDetail() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-left mb-2">使いやすさ</label>
+                        <label className="block text-xs sm:text-sm font-medium text-left mb-2">使いやすさ</label>
                         <StarRating
                           rating={feedbackForm.usability_score}
                           onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, usability_score: rating }))}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-left mb-2">創造性</label>
+                        <label className="block text-xs sm:text-sm font-medium text-left mb-2">創造性</label>
                         <StarRating
                           rating={feedbackForm.creativity_score}
                           onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, creativity_score: rating }))}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-left mb-2">有用性</label>
+                        <label className="block text-xs sm:text-sm font-medium text-left mb-2">有用性</label>
                         <StarRating
                           rating={feedbackForm.usefulness_score}
                           onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, usefulness_score: rating }))}
@@ -559,14 +559,14 @@ export default function AppDetail() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-left mb-2">総合評価</label>
+                      <label className="block text-xs sm:text-sm font-medium text-left mb-2">総合評価</label>
                       <StarRating
                         rating={feedbackForm.overall_score}
                         onRatingChange={rating => setFeedbackForm(prev => ({ ...prev, overall_score: rating }))}
                       />
                     </div>
 
-                    <Button type="submit" disabled={isSubmitting} className="w-full bg-stone-600 hover:bg-stone-700 text-white">
+                    <Button type="submit" disabled={isSubmitting} className="w-full bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                       {isSubmitting ? (
                         <>
                           <Send className="w-4 h-4 mr-2 animate-spin" />
@@ -587,11 +587,11 @@ export default function AppDetail() {
             {!isAuthenticated && (
               <Card className="bg-white">
                 <CardHeader>
-                  <CardTitle className="text-left">フィードバックを投稿</CardTitle>
-                  <CardDescription className="text-left">フィードバックを投稿するにはログインが必要です</CardDescription>
+                  <CardTitle className="text-left text-sm sm:text-base">フィードバックを投稿</CardTitle>
+                  <CardDescription className="text-left text-xs sm:text-sm">フィードバックを投稿するにはログインが必要です</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">このアプリにフィードバックを投稿するには、アカウントが必要です。</p>
+                  <p className="text-sm text-gray-600 mb-4">このアプリにフィードバックを投稿するには、アカウントが必要です。</p>
                   <div className="flex space-x-4">
                     <Button asChild>
                       <Link to="/login">ログイン</Link>
@@ -610,7 +610,7 @@ export default function AppDetail() {
             {/* 開発者情報 */}
             <Card className="bg-white">
               <CardHeader>
-                <CardTitle className="text-left">開発者</CardTitle>
+                                      <CardTitle className="text-left text-sm sm:text-base">開発者</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-3 mb-4">
@@ -619,7 +619,7 @@ export default function AppDetail() {
                     <AvatarFallback>{app.user.username[0]}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-semibold text-left">{app.user.username}</h4>
+                    <h4 className="text-sm sm:text-base font-semibold text-left">{app.user.username}</h4>
                   </div>
                 </div>
                 {/* 自己紹介 */}
@@ -662,7 +662,7 @@ export default function AppDetail() {
             {/* 統計情報 */}
             <Card className="bg-white">
               <CardHeader>
-                <CardTitle className="text-left">統計</CardTitle>
+                                      <CardTitle className="text-left text-sm sm:text-base">統計</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

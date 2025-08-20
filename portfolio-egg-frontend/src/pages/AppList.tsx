@@ -110,16 +110,16 @@ export default function AppList() {
       <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <Logo width={32} height={32} />
-              <h1 className="text-2xl font-bold text-gray-900">Portfolio Egg</h1>
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <Logo width={24} height={24} className="sm:w-8 sm:h-8" />
+                              <h1 className="text-base sm:text-2xl font-bold text-gray-900">Portfolio Egg</h1>
             </div>
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
-                  <Button variant="outline" className="bg-white" size="sm" asChild>
+                  <Button variant="outline" className="bg-white text-xs sm:text-sm" size="sm" asChild>
                     <Link to="/apps/new">
-                      <Plus className="w-4 h-4 mr-2" />
+                      <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                       投稿する
                     </Link>
                   </Button>
@@ -150,10 +150,10 @@ export default function AppList() {
                 </>
               ) : (
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" className="bg-white" size="sm" asChild>
+                  <Button variant="outline" className="bg-white text-xs sm:text-sm" size="sm" asChild>
                     <Link to="/login">ログイン</Link>
                   </Button>
-                  <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white">
+                  <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                     <Link to="/signup">新規登録</Link>
                   </Button>
                 </div>
@@ -211,14 +211,14 @@ export default function AppList() {
             {/* アプリ一覧 */}
             {loading ? (
               <div className="text-center py-8">
-                <p className="text-gray-600">読み込み中...</p>
+                <p className="text-sm text-gray-600">読み込み中...</p>
               </div>
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {paginatedApps.map((app) => (
                     <Link key={app.id} to={`/apps/${app.id}`}>
-                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-[28rem] flex flex-col bg-white overflow-hidden">
+                      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-[22rem] sm:h-[27rem] flex flex-col bg-white overflow-hidden">
                         <CardHeader className="p-0 flex-shrink-0">
                           <div className="w-full h-36 sm:h-40 md:h-44 bg-white/90 rounded-t-lg flex items-center justify-center overflow-hidden">
                             {app.thumbnail_url ? (
@@ -233,31 +233,33 @@ export default function AppList() {
                           </div>
                         </CardHeader>
                         <CardContent className="p-2 sm:p-3 md:p-4 flex-1 flex flex-col">
-                          <div className="flex items-start justify-between mb-1 flex-shrink-0">
-                            <CardTitle className="text-sm sm:text-base md:text-lg text-left line-clamp-1 sm:line-clamp-2 flex-1 mr-2">{app.title}</CardTitle>
-                            <Badge variant="secondary" className="text-xs flex-shrink-0">{app.category}</Badge>
-                          </div>
-                          <div className="text-xs sm:text-sm text-muted-foreground mb-2 overflow-hidden h-10 sm:h-12 md:h-12">
-                            <div className="line-clamp-3">
-                              {app.description}
+                          <div className="flex-1 min-h-0">
+                            <div className="flex items-start justify-between mb-1 flex-shrink-0">
+                              <CardTitle className="text-sm sm:text-base md:text-lg text-left line-clamp-1 sm:line-clamp-2 flex-1 mr-2">{app.title}</CardTitle>
+                              <Badge variant="secondary" className="text-xs flex-shrink-0">{app.category}</Badge>
                             </div>
-                          </div>
-                          <div className="flex items-center space-x-2 mb-1 flex-shrink-0">
-                            <Avatar className="w-4 h-4 sm:w-5 sm:h-5">
-                              <AvatarImage src={app.user.profile_image_url || "/placeholder.svg"} alt={app.user.username} />
-                              <AvatarFallback className="text-xs">{app.user.username[0]}</AvatarFallback>
-                            </Avatar>
-                            <span className="text-xs sm:text-sm text-gray-600 truncate">{app.user.username}</span>
-                            <span className="text-xs text-gray-400 flex-shrink-0">v{app.version}</span>
-                          </div>
-                          <div className="flex items-center justify-between mb-2 flex-shrink-0">
-                            <div className="flex items-center space-x-1">
-                              <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />
-                              <span className="text-xs sm:text-sm font-medium">{app.overall_score}</span>
+                            <div className="text-xs sm:text-sm text-muted-foreground line-clamp-3 overflow-hidden h-16 ">
+                              <div>
+                              {truncateText(app.description, 240)}
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-1 text-gray-500">
-                              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                              <span className="text-xs sm:text-sm">{app.feedback_count}</span>
+                            <div className="flex items-center space-x-2 mb-0.5 sm:mb-1 flex-shrink-0">
+                              <Avatar className="w-4 h-4 sm:w-5 sm:h-5">
+                                <AvatarImage src={app.user.profile_image_url || "/placeholder.svg"} alt={app.user.username} />
+                                <AvatarFallback className="text-xs">{app.user.username[0]}</AvatarFallback>
+                              </Avatar>
+                              <span className="text-xs sm:text-sm text-gray-600 truncate">{app.user.username}</span>
+                              <span className="text-xs text-gray-400 flex-shrink-0">v{app.version}</span>
+                            </div>
+                            <div className="flex items-center justify-between mb-2 flex-shrink-0">
+                              <div className="flex items-center space-x-1">
+                                <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />
+                                <span className="text-xs sm:text-sm font-medium">{app.overall_score}</span>
+                              </div>
+                              <div className="flex items-center space-x-1 text-gray-500">
+                                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <span className="text-xs sm:text-sm">{app.feedback_count}</span>
+                              </div>
                             </div>
                           </div>
                           <div className="flex flex-col gap-1 flex-shrink-0 mt-auto">
@@ -299,7 +301,7 @@ export default function AppList() {
                 {/* ページネーションUI */}
                 {totalPages > 1 && (
                   <div className="flex justify-center items-center mt-8 space-x-2">
-                    <Button size="sm" variant="outline" className="bg-white" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                    <Button size="sm" variant="outline" className="bg-white text-xs sm:text-sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
                       前へ
                     </Button>
                     {Array.from({ length: totalPages }, (_, i) => (
@@ -313,7 +315,7 @@ export default function AppList() {
                         {i + 1}
                       </Button>
                     ))}
-                    <Button size="sm" variant="outline" className="bg-white" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                    <Button size="sm" variant="outline" className="bg-white text-xs sm:text-sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
                       次へ
                     </Button>
                   </div>
@@ -329,7 +331,7 @@ export default function AppList() {
                 {/* プロフィールセクション */}
                 <Card className="bg-white">
                   <CardHeader>
-                    <CardTitle className="text-left">プロフィール</CardTitle>
+                                          <CardTitle className="text-left text-sm sm:text-base">プロフィール</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-start space-x-4">
@@ -347,8 +349,8 @@ export default function AppList() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-left">{user?.username}</h3>
-                        <p className="text-gray-600 mb-3 text-left">{user?.bio || 'プロフィールが設定されていません'}</p>
+                        <h3 className="text-lg sm:text-xl font-semibold text-left">{user?.username}</h3>
+                        <p className="text-sm text-gray-600 mb-3 text-left">{user?.bio || 'プロフィールが設定されていません'}</p>
                         <div className="flex justify-start items-center gap-6 mb-4">
                           {user?.github_url && (
                             <div className="flex items-center space-x-2 text-sm">
@@ -368,9 +370,9 @@ export default function AppList() {
                           )}
                         </div>
                         <div className="flex justify-end">
-                          <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white">
-                            <Link to="/profile/edit">プロフィール編集</Link>
-                          </Button>
+                                                  <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
+                          <Link to="/profile/edit">プロフィール編集</Link>
+                        </Button>
                         </div>
                       </div>
                     </div>
@@ -381,10 +383,10 @@ export default function AppList() {
                 <Card className="bg-white">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-left">投稿したアプリ</CardTitle>
-                      <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white">
+                      <CardTitle className="text-left text-sm sm:text-base">投稿したアプリ</CardTitle>
+                      <Button size="sm" asChild className="bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                         <Link to="/apps/new">
-                          <Plus className="w-4 h-4 mr-2" />
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                           新しいアプリを投稿
                         </Link>
                       </Button>
@@ -393,7 +395,7 @@ export default function AppList() {
                   <CardContent>
                     {myAppsLoading ? (
                       <div className="text-center py-4">
-                        <p className="text-gray-600">読み込み中...</p>
+                        <p className="text-sm text-gray-600">読み込み中...</p>
                       </div>
                     ) : myApps.length > 0 ? (
                       <div className="space-y-4">
@@ -413,8 +415,8 @@ export default function AppList() {
                                   )}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <h4 className="font-semibold text-left">{app.title}</h4>
-                                  <p className="text-sm text-gray-600 mb-2 text-left">{truncateText(app.description, 120)}</p>
+                                  <h4 className="text-sm sm:text-base font-semibold text-left">{app.title}</h4>
+                                  <p className="text-sm text-gray-600 mb-2 text-left line-clamp-3">{truncateText(app.description, 240)}</p>
                                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                                     <div className="flex items-center space-x-1">
                                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -430,14 +432,14 @@ export default function AppList() {
                                 </div>
                               </div>
                             </Link>
-                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                              <Button size="sm" variant="outline" className="bg-white w-full sm:w-auto" asChild>
+                            <div className="flex flex-col sm:flex-row sm:justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+                              <Button size="sm" variant="outline" className="bg-white w-full sm:w-auto h-7 sm:h-8" asChild>
                                 <Link to={`/apps/${app.id}/edit`}>編集</Link>
                               </Button>
-                              <Button size="sm" variant="outline" className="bg-white w-full sm:w-auto" asChild>
+                              <Button size="sm" variant="outline" className="bg-white w-full sm:w-auto h-7 sm:h-8" asChild>
                                 <Link to={`/apps/${app.id}/versions/new`}>バージョン追加</Link>
                               </Button>
-                              <Button size="sm" variant="destructive" className="w-full sm:w-auto" onClick={async (e) => {
+                              <Button size="sm" variant="destructive" className="w-full sm:w-auto h-7 sm:h-8" onClick={async (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 if (window.confirm('本当にこのアプリを削除しますか？')) {
@@ -458,10 +460,10 @@ export default function AppList() {
                       </div>
                     ) : (
                       <div className="text-center py-8">
-                        <p className="text-gray-600 mb-4">まだアプリを投稿していません</p>
-                        <Button asChild className="bg-stone-600 hover:bg-stone-700 text-white">
+                        <p className="text-sm text-gray-600 mb-4">まだアプリを投稿していません</p>
+                        <Button asChild className="bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                           <Link to="/apps/new">
-                            <Plus className="w-4 h-4 mr-2" />
+                            <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                             最初のアプリを投稿
                           </Link>
                         </Button>
@@ -472,12 +474,12 @@ export default function AppList() {
               </>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-600 mb-4">ログインしてマイページを利用してください</p>
+                <p className="text-sm text-gray-600 mb-4">ログインしてマイページを利用してください</p>
                 <div className="flex justify-center space-x-4">
-                  <Button asChild className="bg-stone-600 hover:bg-stone-700 text-white">
+                  <Button variant="outline" asChild className="bg-white text-xs sm:text-sm">
                     <Link to="/login">ログイン</Link>
                   </Button>
-                  <Button variant="outline" asChild className="bg-white">
+                  <Button asChild className="bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                     <Link to="/signup">新規登録</Link>
                   </Button>
                 </div>

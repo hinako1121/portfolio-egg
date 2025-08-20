@@ -118,17 +118,17 @@ export default function Signup() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-block">
             <div className="flex items-center justify-center space-x-3 mb-2">
-              <Logo width={40} height={40} />
-              <h1 className="text-3xl font-bold text-gray-900">Portfolio Egg</h1>
+                              <Logo width={24} height={24} className="sm:w-10 sm:h-10" />
+                              <h1 className="text-base sm:text-2xl font-bold text-gray-900">Portfolio Egg</h1>
             </div>
           </Link>
-          <p className="text-gray-600">アプリを投稿してフィードバックを受け取ろう</p>
+                          <p className="text-sm text-gray-600">アプリを投稿してフィードバックを受け取ろう</p>
         </div>
 
         <Card className="w-full max-w-md bg-white/80">
           <CardHeader>
-            <CardTitle className="text-center">アカウントを作成</CardTitle>
-            <CardDescription className="text-center">
+            <CardTitle className="text-center text-sm sm:text-base">アカウントを作成</CardTitle>
+            <CardDescription className="text-center text-xs sm:text-sm">
               必要な情報を入力してアカウントを作成してください
             </CardDescription>
           </CardHeader>
@@ -142,7 +142,7 @@ export default function Signup() {
               )}
 
               <div>
-                <Label htmlFor="username" className="text-left">
+                <Label htmlFor="username" className="text-left text-sm sm:text-base">
                   <User className="w-4 h-4 inline mr-2" />
                   ユーザー名 <span className="text-red-500">*</span>
                 </Label>
@@ -160,7 +160,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-left">
+                <Label htmlFor="email" className="text-left text-sm sm:text-base">
                   <Mail className="w-4 h-4 inline mr-2" />
                   メールアドレス <span className="text-red-500">*</span>
                 </Label>
@@ -177,7 +177,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-left">
+                <Label htmlFor="password" className="text-left text-sm sm:text-base">
                   <Lock className="w-4 h-4 inline mr-2" />
                   パスワード <span className="text-red-500">*</span>
                 </Label>
@@ -211,7 +211,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <Label htmlFor="passwordConfirmation" className="text-left">
+                <Label htmlFor="passwordConfirmation" className="text-left text-sm sm:text-base">
                   <Lock className="w-4 h-4 inline mr-2" />
                   パスワード確認 <span className="text-red-500">*</span>
                 </Label>
@@ -243,7 +243,7 @@ export default function Signup() {
                 {errors.password_confirmation && <p className="text-sm text-red-500 mt-1">{errors.password_confirmation}</p>}
               </div>
 
-              <Button type="submit" disabled={isSubmitting} className="w-full bg-stone-600 hover:bg-stone-700 text-white">
+              <Button type="submit" disabled={isSubmitting} className="w-full bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent"></div>

@@ -242,11 +242,11 @@ export default function EditApp() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Link to={`/apps/${id}`} className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link to={`/apps/${id}`} className="flex items-center text-gray-600 hover:text-gray-900 text-sm sm:text-base">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 戻る
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">アプリを編集</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-900">アプリを編集</h1>
             </div>
           </div>
         </div>
@@ -263,8 +263,8 @@ export default function EditApp() {
                   {/* 基本情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">基本情報</CardTitle>
-                      <CardDescription className="text-left">アプリの基本的な情報を編集してください</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">基本情報</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">アプリの基本的な情報を編集してください</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
@@ -323,8 +323,8 @@ export default function EditApp() {
                   {/* サムネイル画像 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">サムネイル画像</CardTitle>
-                      <CardDescription className="text-left">アプリのサムネイル画像を設定してください</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">サムネイル画像</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">アプリのサムネイル画像を設定してください</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {/* 現在の画像 */}
@@ -384,7 +384,7 @@ export default function EditApp() {
                           id="thumbnail-upload"
                         />
                         <Label htmlFor="thumbnail-upload">
-                          <Button type="button" variant="outline" className="bg-white" size="sm" asChild>
+                          <Button type="button" variant="outline" className="bg-white text-xs sm:text-sm" size="sm" asChild>
                             <span>
                               <Upload className="w-4 h-4 mr-2" />
                               ファイルを選択
@@ -404,8 +404,8 @@ export default function EditApp() {
                   {/* リンク情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">リンク情報</CardTitle>
-                      <CardDescription className="text-left">GitHubリポジトリや公開先URLを入力してください（任意）</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">リンク情報</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">GitHubリポジトリや公開先URLを入力してください（任意）</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
@@ -447,8 +447,8 @@ export default function EditApp() {
                   {/* バージョン情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">バージョン情報</CardTitle>
-                      <CardDescription className="text-left">現在のバージョン情報を表示します</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">バージョン情報</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">現在のバージョン情報を表示します</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
@@ -482,10 +482,10 @@ export default function EditApp() {
 
               {/* 保存ボタン */}
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                <Button type="button" variant="outline" className="bg-white" asChild>
+                <Button type="button" variant="outline" className="bg-white text-xs sm:text-sm" asChild>
                   <Link to={`/apps/${id}`}>キャンセル</Link>
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white">
+                <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                   {isSubmitting ? (
                     <>
                       <Save className="w-4 h-4 mr-2 animate-spin" />

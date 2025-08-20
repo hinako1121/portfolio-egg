@@ -128,7 +128,19 @@
   * {
     @apply border-border;
   }
+  html {
+    background-color: #f9fafb;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     @apply bg-background text-foreground;
+    background-color: #f9fafb;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  #root {
+    background-color: #f9fafb;
+    min-height: 100vh;
   }
 }

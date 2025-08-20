@@ -196,7 +196,7 @@ export default function ProfileEdit() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">ログインが必要です</p>
+                          <p className="text-sm text-gray-600">ログインが必要です</p>
           <Link to="/login" className="text-blue-600 hover:underline">
             ログインページへ
           </Link>
@@ -209,7 +209,7 @@ export default function ProfileEdit() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">読み込み中...</p>
+                          <p className="text-sm text-gray-600">読み込み中...</p>
         </div>
       </div>
     );
@@ -219,7 +219,7 @@ export default function ProfileEdit() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">プロフィールが見つかりません</p>
+                          <p className="text-sm text-gray-600">プロフィールが見つかりません</p>
           <Link to="/" className="text-blue-600 hover:underline">
             ホームに戻る
           </Link>
@@ -232,7 +232,7 @@ export default function ProfileEdit() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">{fetchError}</p>
+                          <p className="text-sm text-gray-600">{fetchError}</p>
           <Link to="/" className="text-blue-600 hover:underline">
             ホームに戻る
           </Link>
@@ -248,11 +248,11 @@ export default function ProfileEdit() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Link to="/" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link to="/" className="flex items-center text-gray-600 hover:text-gray-900 text-sm sm:text-base">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 戻る
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">プロフィール編集</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-900">プロフィール編集</h1>
             </div>
           </div>
         </div>
@@ -269,12 +269,12 @@ export default function ProfileEdit() {
                   {/* 基本情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">基本情報</CardTitle>
-                      <CardDescription className="text-left">プロフィールの基本情報を編集してください</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">基本情報</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">プロフィールの基本情報を編集してください</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <Label htmlFor="username" className="text-left">
+                        <Label htmlFor="username" className="text-left text-sm sm:text-base">
                           ユーザー名 <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -289,7 +289,7 @@ export default function ProfileEdit() {
                       </div>
 
                       <div>
-                        <Label htmlFor="bio" className="text-left">
+                        <Label htmlFor="bio" className="text-left text-sm sm:text-base">
                           自己紹介
                         </Label>
                         <Textarea
@@ -305,7 +305,7 @@ export default function ProfileEdit() {
                       </div>
 
                       <div>
-                        <Label htmlFor="githubUrl" className="text-left">
+                        <Label htmlFor="githubUrl" className="text-left text-sm sm:text-base">
                           <Github className="w-4 h-4 inline mr-2" />
                           GitHub URL
                         </Label>
@@ -321,7 +321,7 @@ export default function ProfileEdit() {
                       </div>
 
                       <div>
-                        <Label htmlFor="twitterUrl" className="text-left">
+                        <Label htmlFor="twitterUrl" className="text-left text-sm sm:text-base">
                           <Twitter className="w-4 h-4 inline mr-2" />
                           X URL
                         </Label>
@@ -341,8 +341,8 @@ export default function ProfileEdit() {
                   {/* プロフィール画像 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">プロフィール画像</CardTitle>
-                      <CardDescription className="text-left">プロフィール画像を設定してください</CardDescription>
+                      <CardTitle className="text-left text-sm sm:text-base">プロフィール画像</CardTitle>
+                      <CardDescription className="text-left text-xs sm:text-sm">プロフィール画像を設定してください</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {/* 現在の画像 */}
@@ -380,7 +380,7 @@ export default function ProfileEdit() {
                         onDrop={handleDrop}
                       >
                         <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600 mb-2">画像をドラッグ&ドロップ</p>
+                        <p className="text-xs sm:text-sm text-gray-600 mb-2">画像をドラッグ&ドロップ</p>
                         <input
                           type="file"
                           accept="image/*"
@@ -393,7 +393,7 @@ export default function ProfileEdit() {
                           id="profile-image-upload"
                         />
                         <Label htmlFor="profile-image-upload">
-                                                      <Button type="button" variant="outline" className="bg-white" size="sm" asChild>
+                                                      <Button type="button" variant="outline" className="bg-white text-xs sm:text-sm" size="sm" asChild>
                             <span>
                               <Upload className="w-4 h-4 mr-2" />
                               ファイルを選択
@@ -416,10 +416,10 @@ export default function ProfileEdit() {
 
               {/* 保存ボタン */}
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                <Button type="button" variant="outline" className="bg-white" asChild>
+                <Button type="button" variant="outline" className="bg-white text-xs sm:text-sm" asChild>
                   <Link to="/">キャンセル</Link>
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white">
+                <Button type="submit" disabled={isSubmitting} className="min-w-32 bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm">
                   {isSubmitting ? (
                     <>
                       <Save className="w-4 h-4 mr-2 animate-spin" />
@@ -450,7 +450,7 @@ export default function ProfileEdit() {
                   {/* 現在のプロフィール */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">現在のプロフィール</CardTitle>
+                      <CardTitle className="text-left text-sm sm:text-base">現在のプロフィール</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center space-x-3 mb-4">
@@ -459,7 +459,7 @@ export default function ProfileEdit() {
                           <AvatarFallback>{profile.username[0]}</AvatarFallback>
                         </Avatar>
                         <div>
-                          <h3 className="font-semibold text-left">{profile.username}</h3>
+                          <h3 className="text-sm sm:text-base font-semibold text-left">{profile.username}</h3>
                           <p className="text-sm text-gray-500 text-left">{profile.email}</p>
                         </div>
                       </div>
@@ -490,7 +490,7 @@ export default function ProfileEdit() {
                   {/* アカウント情報 */}
                   <Card className="w-full max-w-none bg-white">
                     <CardHeader>
-                      <CardTitle className="text-left">アカウント情報</CardTitle>
+                      <CardTitle className="text-left text-sm sm:text-base">アカウント情報</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3 text-sm">

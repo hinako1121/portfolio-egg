@@ -117,17 +117,17 @@ export default function Login() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-block">
             <div className="flex items-center justify-center space-x-3 mb-2">
-              <Logo width={40} height={40} />
-              <h1 className="text-3xl font-bold text-gray-900">Portfolio Egg</h1>
+                              <Logo width={24} height={24} className="sm:w-10 sm:h-10" />
+                              <h1 className="text-base sm:text-2xl font-bold text-gray-900">Portfolio Egg</h1>
             </div>
           </Link>
-          <p className="text-gray-600">アプリを投稿してフィードバックを受け取ろう</p>
+                          <p className="text-sm text-gray-600">アプリを投稿してフィードバックを受け取ろう</p>
         </div>
 
         <Card className="w-full max-w-md bg-white/80">
           <CardHeader>
-            <CardTitle className="text-center">ログイン</CardTitle>
-            <CardDescription className="text-center">
+            <CardTitle className="text-center text-sm sm:text-base">ログイン</CardTitle>
+            <CardDescription className="text-center text-xs sm:text-sm">
               アカウントにログインしてアプリを投稿・管理しましょう
             </CardDescription>
           </CardHeader>
@@ -141,7 +141,7 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="email" className="text-left">
+                <Label htmlFor="email" className="text-left text-sm sm:text-base">
                   <Mail className="w-4 h-4 inline mr-2" />
                   メールアドレス <span className="text-red-500">*</span>
                 </Label>
@@ -158,7 +158,7 @@ export default function Login() {
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-left">
+                <Label htmlFor="password" className="text-left text-sm sm:text-base">
                   <Lock className="w-4 h-4 inline mr-2" />
                   パスワード <span className="text-red-500">*</span>
                 </Label>
@@ -184,7 +184,7 @@ export default function Login() {
                 {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
               </div>
 
-              <Button type="submit" className="w-full bg-stone-600 hover:bg-stone-700 text-white" disabled={isSubmitting}>
+              <Button type="submit" className="w-full bg-stone-600 hover:bg-stone-700 text-white text-xs sm:text-sm" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
